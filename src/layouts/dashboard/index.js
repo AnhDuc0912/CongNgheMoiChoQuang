@@ -1,16 +1,23 @@
 import { useTheme } from "@mui/material/styles";
 import { Box, Divider, IconButton, Stack, Switch } from "@mui/material";
 import React, { useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import Logo from "../../assets/Images/siu.ico";
 import { Nav_Buttons } from "../../data";
 import {  Gear } from "phosphor-react";
+import { useSelector } from "react-redux";
 
 
 
 const DashboardLayout = () => {
   const theme = useTheme();
   const [selected, setSelected] = useState(0);
+
+  // const {isLoggedIn} = useSelector((state) => state.auth)
+
+  // if(!isLoggedIn){
+  //   return <Navigate to ="/auth/login" />
+  // }
 
   return (
     <>
