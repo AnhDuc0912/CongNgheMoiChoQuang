@@ -24,13 +24,13 @@ const GeneralApp = Loadable(
 export default function Router() {
   return useRoutes([
     {
-      path:"/auth",
-      element:<MainLayout />,
-      children:[
-        {element:<LoginPage />, path:"login"},
-        {element:<RegisterPage />, path:"register"},
-        {element:<ResetPassword />, path:"reset-Password"},
-        {element:<NewPassword />, path:"new-Password"},
+      path: "/auth",
+      element: <MainLayout />,
+      children: [
+        { element: <LoginPage />, path: "login" },
+        { element: <RegisterPage />, path: "register" },
+        { element: <ResetPassword />, path: "reset-Password" },
+        { element: <NewPassword />, path: "new-Password" },
       ]
     },
     {
@@ -39,7 +39,6 @@ export default function Router() {
       children: [
         { element: <Navigate to={DEFAULT_PATH} replace />, index: true },
         { path: "/app", element: <GeneralApp /> },
-
         { path: "404", element: <Page404 /> },
         { path: "*", element: <Navigate to="/404" replace /> },
       ],

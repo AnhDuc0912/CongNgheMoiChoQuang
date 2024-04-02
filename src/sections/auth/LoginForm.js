@@ -1,114 +1,121 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import * as Yup from "yup";
-import { useForm } from "react-hook-form";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 import {
-  Alert,
-  Button,
-  IconButton,
-  InputAdornment,
-  Link,
-  Stack,
+    Button,
+    IconButton,
+    InputAdornment,
+    Link,
+    Stack,
+    TextField,
 } from "@mui/material";
-import { yupResolver } from "@hookform/resolvers/yup";
-import FormProvider from "../../components/hook-form/FormProvider";
-import { RHFTextField } from "../../components/hook-form";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useDispatch } from "react-redux";
-import { LoginUser } from "../../redux/slices/auth";
 import axios from "axios";
+import { useFormik } from "formik"
+import { setUser } from "../../redux/slices/userSlice";
+import { useSnackbar } from "notistack";
+
 const LoginForm = () => {
-  //   const dispatch = useDispatch();
-  const [showPassword, setShowPassword] = useState(false);
+    const dispatch = useDispatch();
+    const { enqueueSnackbar } = useSnackbar();
+    const [showPassword, setShowPassword] = useState(false);
+    const navigate = useNavigate();
+    const formik = useFormik({
+        enableReinitialize: true,
+        initialValues: {
+            phoneNumber: '',
+            password: ''
+        },
+        validationSchema: Yup.object().shape({
+            phoneNumber: Yup
+                .string()
+                .required('Vui lòng nhập số điện thoại'),
+            password: Yup.string()
+                .required('Vui lòng nhập mật khẩu')
+        }),
+        onSubmit: async values => {
+            axios
+                .post("http://localhost:8080/auth/login", values)
+                .then(res => {
 
-  useEffect(() => {
-    //   try {
-    //     axios.post("http://localhost:8080/auth/login")
-    //         .then(res => {console.log(res.data)})
-    //   } catch (error) {
-    //     console.log(error.message);
-    //   }
-    alert("vao`");
-  }, []);
+                    localStorage.setItem("accessToken", res.token);
+                    navigate('/app');
+                    dispatch(setUser({
+                        phoneNumber: '0969696969',
+                        avatar: 'avatar.jpeg',
+                        name: 'Phạm Quốc Anh Đức',
+                        _id: '123'
+                    }));
+                })
+                .catch(err => {
+                    enqueueSnackbar(`Đăng nhập thất bại`, {
+                        variant: 'error',
+                        anchorOrigin: {
+                            vertical: 'bottom',
+                            horizontal: 'right'
+                        }
+                    });
+                });
+        },
+    });
 
-  const LoginSchema = Yup.object().shape({
-    email: Yup.string().required("Nhập đúng Email"),
-    password: Yup.string().required("Nhập đúng mật khẩu"),
-  });
-
-  const methods = useForm({
-    resolver: yupResolver(LoginSchema),
-  });
-
-  const {
-    reset,
-    setError,
-    handleSubmit,
-    formState: { errors, isSubmitting, isSubmitSuccessful },
-  } = methods;
-  // const history = useHistory();
-  const onSubmit = async () => {
-    try {
-      //    dispatch(LoginUser(data));
-      let data = {}
-
-      return data;
-    } catch (error) {
-      console.log(error);
-      reset();
-      setError("afterSubmit", {
-        ...error,
-        message: error.message,
-      });
-    }
-  };
-
-  return (
-    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-      <Stack spacing={3}>
-        {!!errors.afterSumit && (
-          <Alert severity="error">{errors.afterSumit.message}</Alert>
-        )}
-
-        <RHFTextField name="phoneNumber" label="Số Điện Thoại" />
-        <RHFTextField
-          name="password"
-          label="Mật Khẩu"
-          type={showPassword ? "text" : "password"}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment>
-                <IconButton
-                  onClick={() => {
-                    setShowPassword(!showPassword);
-                  }}>
-                  {showPassword ? <Visibility /> : <VisibilityOff />}
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-        />
-      </Stack>
-      <Stack alignItems={"flex-end"} sx={{ my: 2 }}>
-        <Link
-          component={RouterLink}
-          to="/auth/reset-Password"
-          varient="body2"
-          color="inherit"
-          underline="always">
-          Quên Mật Khẩu?
-        </Link>
-      </Stack>
-      <Button
-        onClick={onSubmit()}
-        fullWidth
-        color="inherit"
-        size="large"
-        type="submit"
-        variant="contained">
-        Đăng nhập
-      </Button>
-    </FormProvider>
-  );
+    return (
+        <form onSubmit={formik.handleSubmit}>
+            <Stack spacing={3}>
+                <TextField
+                    fullWidth
+                    id="phoneNumber"
+                    label="Số điện thoại"
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    error={formik.errors.phoneNumber && formik.touched.phoneNumber}
+                    helperText={formik.errors.phoneNumber}
+                    value={formik.values.phoneNumber}
+                />
+                <TextField
+                    fullWidth
+                    id="password"
+                    label="Mật khẩu"
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    error={formik.errors.password && formik.touched.password}
+                    helperText={formik.errors.password}
+                    value={formik.values.password}
+                    type={showPassword ? "text" : "password"}
+                    InputProps={{
+                        endAdornment: (
+                            <InputAdornment>
+                                <IconButton
+                                    onClick={() => {
+                                        setShowPassword(!showPassword);
+                                    }}>
+                                    {showPassword ? <Visibility /> : <VisibilityOff />}
+                                </IconButton>
+                            </InputAdornment>
+                        ),
+                    }}
+                />
+            </Stack>
+            <Stack alignItems={"flex-end"} sx={{ my: 2 }}>
+                <Link
+                    component={RouterLink}
+                    to="/auth/reset-Password"
+                    varient="body2"
+                    color="inherit"
+                    underline="always">
+                    Quên Mật Khẩu?
+                </Link>
+            </Stack>
+            <Button
+                fullWidth
+                color="inherit"
+                size="large"
+                type="submit"
+                variant="contained">
+                Đăng nhập
+            </Button>
+        </form>
+    );
 };
 export default LoginForm;

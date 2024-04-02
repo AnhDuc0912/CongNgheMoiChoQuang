@@ -1,5 +1,5 @@
 import { useTheme } from "@mui/material/styles";
-import { Box, Divider, IconButton, Stack, Switch } from "@mui/material";
+import { Box, Divider, IconButton, Stack } from "@mui/material";
 import React, { useState } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import Logo from "../../assets/Images/siu.ico";
@@ -12,12 +12,12 @@ import { useSelector } from "react-redux";
 const DashboardLayout = () => {
   const theme = useTheme();
   const [selected, setSelected] = useState(0);
+  const { user } = useSelector((state) => state.user);
 
-  // const {isLoggedIn} = useSelector((state) => state.auth)
+  if (!user) {
+    return <Navigate to="/auth/login" replace />;
+  }
 
-  // if(!isLoggedIn){
-  //   return <Navigate to ="/auth/login" />
-  // }
 
   return (
     <>

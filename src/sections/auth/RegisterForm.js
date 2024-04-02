@@ -1,83 +1,98 @@
 import React, { useState } from "react";
 import * as Yup from 'yup';
-import {useForm} from "react-hook-form"
-import { yupResolver } from "@hookform/resolvers/yup";
-import FormProvider from "../../components/hook-form/FormProvider";
-import { RHFTextField } from "../../components/hook-form";
-import { Alert,Button,IconButton,InputAdornment,Stack } from "@mui/material";
+import { Button, IconButton, InputAdornment, Stack, TextField } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { useFormik } from "formik";
+import { useSnackbar } from "notistack";
 
 const RegisterForm = () => {
-    const [showPassword , setShowPassword] = useState(false);
-    
-    const RegisterSchema = Yup.object().shape({
-        firstName : Yup.string().required("Nhập họ"),
-        lastName : Yup.string().required("Nhập tên"),
-        email : Yup.string().required("Nhập đúng Email"),
-        password:  Yup.string().required("Nhập đúng mật khẩu"),
+    const { enqueueSnackbar } = useSnackbar();
+    const [showPassword, setShowPassword] = useState(false);
+    const formik = useFormik({
+        enableReinitialize: true,
+        initialValues: {
+            firstName: "",
+            lastName: "",
+            phoneNumber: "",
+            password: ""
+        },
+        validationSchema: Yup.object().shape({
+            firstName: Yup.string().required("Nhập họ"),
+            lastName: Yup.string().required("Nhập tên"),
+            phoneNumber: Yup.string().required("Nhập đúng Email"),
+            password: Yup.string().required("Nhập đúng mật khẩu"),
+        }),
+        onSubmit: async values => {
+            alert("Đăng ký thành công")
+        },
     });
 
-    const defaultValues = {
-        firstName :"",
-        lastName:"",
-        email: "demo@gmail.com",
-        password:"demo123"
-    }
-
-    const methods  = useForm({
-        resolver : yupResolver(RegisterSchema),
-        defaultValues,
-    });
-
-    const {reset, setError, handleSubmit, formState: {errors, isSubmitting, isSubmitSuccessful},
-    }= methods;
-
-    const  onSubmit = async (data)=> {
-        try{
-
-        }
-        catch(error){
-            console.log(error);
-            reset();
-            setError("afterSubmit",{
-                ...error,
-                message: error.message,
-            })
-
-        }
-    };
     return (
-    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={formik.handleSubmit}>
+            <Stack spacing={3}>
+                <TextField
+                    fullWidth
+                    id="firstName"
+                    label="Tên"
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    error={formik.errors.firstName && formik.touched.firstName}
+                    helperText={formik.errors.firstName}
+                    value={formik.values.firstName}
+                />
+                <TextField
+                    fullWidth
+                    id="lastName"
+                    label="Họ"
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    error={formik.errors.lastName && formik.touched.lastName}
+                    helperText={formik.errors.lastName}
+                    value={formik.values.lastName}
+                />
+                <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+                    <TextField
+                        fullWidth
+                        id="phoneNumber"
+                        label="Số điện thoại"
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        error={formik.errors.phoneNumber && formik.touched.phoneNumber}
+                        helperText={formik.errors.phoneNumber}
+                        value={formik.values.phoneNumber}
+                    />
+                    <TextField
+                        fullWidth
+                        id="password"
+                        label="Mật khẩu"
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        error={formik.errors.password && formik.touched.password}
+                        helperText={formik.errors.password}
+                        value={formik.values.password}
+                        type={showPassword ? "text" : "password"}
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment>
+                                    <IconButton
+                                        onClick={() => {
+                                            setShowPassword(!showPassword);
+                                        }}>
+                                        {showPassword ? <Visibility /> : <VisibilityOff />}
+                                    </IconButton>
+                                </InputAdornment>
+                            ),
+                        }}
+                    />
 
-        <Stack spacing={3}>
-            {!!errors.afterSumit && (<Alert severity="error">{errors.afterSumit.message}</Alert>)}
+                </Stack>
+                <Button fullWidth color="inherit" size="large" type="submit" variant="contained" >
+                    Đăng ký
+                </Button>
+            </Stack>
 
-        
-            <RHFTextField name="firstName" label="Tên" />
-            <RHFTextField name="lastName" label="Họ" />
-        <Stack direction={{xs:"column",sm:"row"}} spacing ={2}>
-           
-            <RHFTextField name="email" label="Email" />
-            <RHFTextField name="password"  type={showPassword ? "text" :"password"}  label="Password" InputProps ={{
-            endAdornment:(
-                <InputAdornment>
-                    <IconButton onClick={() => {
-                        setShowPassword(!showPassword);
-                    }}>
-                       {showPassword ? <Visibility /> : <VisibilityOff />}
-                    </IconButton>
-                </InputAdornment>
-            )
-        }} />
-        
-        </Stack>
-        <Button fullWidth color="inherit" size="large" type="submit" variant="contained" >
-            Đăng ký
-        </Button>
-        </Stack>
-        
-        
-    </FormProvider>
+
+        </form>
     )
 }
 export default RegisterForm;

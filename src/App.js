@@ -1,19 +1,41 @@
-// routes
 import Router from "./routes";
-// theme
 import ThemeProvider from './theme';
-// components
 import ThemeSettings from './components/settings';
+import React, { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { setUser } from "./redux/slices/userSlice";
+import { SnackbarProvider, enqueueSnackbar } from 'notistack';
 
-function App() {
+export default function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    // if (token?.length) {
+
+    //   dispatch(setUser({
+    //     phoneNumber: '0969696969',
+    //     avatar: 'avatar.jpeg',
+    //     name: 'Phạm Quốc Anh Đức',
+    //     _id: '123'
+    //   }))
+    // }
+    dispatch(setUser({
+      phoneNumber: '0969696969',
+      avatar: 'avatar.jpeg',
+      name: 'Phạm Quốc Anh Đức',
+      _id: '123'
+    }))
+
+  }, [dispatch]);
+
   return (
     <ThemeProvider>
       <ThemeSettings>
-        {" "}
-        <Router />{" "}
+        <SnackbarProvider>
+          <Router />
+        </SnackbarProvider>
       </ThemeSettings>
     </ThemeProvider>
   );
 }
-
-export default App;

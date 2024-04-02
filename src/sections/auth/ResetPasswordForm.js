@@ -1,58 +1,50 @@
-import React, { useState } from "react";
+import React from "react";
 import * as Yup from 'yup';
-import {useForm} from 'react-hook-form';
-import {Link as RouterLink} from "react-router-dom"
-import { Alert, Button, Stack } from "@mui/material";
-import {yupResolver} from "@hookform/resolvers/yup";
-import FormProvider from "../../components/hook-form/FormProvider";
-import { RHFTextField } from "../../components/hook-form";
-const ResetPasswordForm = () =>{
-    
-    
-    const ResetPasswordSchema = Yup.object().shape({
-        email : Yup.string().required("Nhập đúng Email"),
+import { Button, Stack, TextField } from "@mui/material";
+import { useFormik } from "formik";
+import { useNavigate } from "react-router-dom";
+
+const ResetPasswordForm = () => {
+    const navigate = useNavigate();
+    const formik = useFormik({
+        enableReinitialize: true,
+        initialValues: {
+            email: ''
+        },
+        validationSchema: Yup.object().shape({
+            email: Yup
+                .string()
+                .required("Nhập đúng Email")
+        }),
+        onSubmit: async values => {
+            navigate('/auth/new-Password');
+        },
     });
 
-    const defaultValues = {
-        email: "demo@gmail.com",
-    }
-
-    const methods  = useForm({
-        resolver : yupResolver(ResetPasswordSchema),
-        defaultValues,
-    });
-
-    const {reset, setError, handleSubmit, formState: {errors, isSubmitting, isSubmitSuccessful},
-    }= methods;
-
-    const  onSubmit = async (data)=> {
-        try{
-
-        }
-        catch(error){
-            console.log(error);
-            reset();
-            setError("afterSubmit",{
-                ...error,
-                message: error.message,
-            })
-
-        }
-    }
     return (
-    
-    <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-        <Stack spacing={3}>
-            {!!errors.afterSumit && <Alert severity="error">{errors.afterSumit.message}</Alert>}
 
-        <RHFTextField name="email" label="Email"/>
-        
-       
-        <Button fullWidth color="inherit" size="large" type="submit" variant="contained" >
-            Gửi mã
-        </Button>
-        </Stack>
-    </ FormProvider>
+        <form onSubmit={formik.handleSubmit}>
+            <Stack spacing={3}>
+                <TextField
+                    fullWidth
+                    id="email"
+                    label="Email"
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    error={formik.errors.email && formik.touched.email}
+                    helperText={formik.errors.email}
+                    value={formik.values.email}
+                />
+                <Button
+                    fullWidth
+                    color="inherit"
+                    size="large"
+                    type="submit"
+                    variant="contained" >
+                    Gửi mã
+                </Button>
+            </Stack>
+        </ form>
     );
 };
 export default ResetPasswordForm;
