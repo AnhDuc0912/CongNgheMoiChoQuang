@@ -4,26 +4,48 @@ import { Button, IconButton, InputAdornment, Stack, TextField } from "@mui/mater
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useFormik } from "formik";
 import { useSnackbar } from "notistack";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const RegisterForm = () => {
     const { enqueueSnackbar } = useSnackbar();
     const [showPassword, setShowPassword] = useState(false);
+    const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
+    const navigate = useNavigate();
+
+
     const formik = useFormik({
         enableReinitialize: true,
         initialValues: {
-            firstName: "",
-            lastName: "",
+            name: "",
             phoneNumber: "",
-            password: ""
+            password: "",
+            confirmPassword: "",
+            email: ""
         },
         validationSchema: Yup.object().shape({
-            firstName: Yup.string().required("Nhập họ"),
-            lastName: Yup.string().required("Nhập tên"),
-            phoneNumber: Yup.string().required("Nhập đúng Email"),
-            password: Yup.string().required("Nhập đúng mật khẩu"),
+            name: Yup.string().required("Nhập họ và tên"),
+            email: Yup.string().required("Vui lòng nhập email").email("Vui lòng nhập đúng định dạng email"),
+            phoneNumber: Yup.string().required("Vui lòng nhập số điện thoại"),
+            confirmPassword: Yup.string().required("Vui lòng nhập lại mật khẩu"),
+            password: Yup.string().required("Nhập mật khẩu ít nhất 8 ký tự chứa 0-9, a-z, A-Z và ký tự đặc biệt"),
         }),
         onSubmit: async values => {
-            alert("Đăng ký thành công")
+            await axios
+                .post("http://localhost:8080/auth/signup", values)
+                .then(res => {
+                    navigate('/auth/verify')
+                    localStorage.setItem('email', values.email);
+                })
+                .catch(err => {
+                    enqueueSnackbar(`Đăng ký không thành công`, {
+                        variant: 'error',
+                        anchorOrigin: {
+                            vertical: 'bottom',
+                            horizontal: 'right'
+                        }
+                    });
+                });
         },
     });
 
@@ -32,35 +54,35 @@ const RegisterForm = () => {
             <Stack spacing={3}>
                 <TextField
                     fullWidth
-                    id="firstName"
-                    label="Tên"
+                    id="name"
+                    label="Họ và tên"
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
-                    error={formik.errors.firstName && formik.touched.firstName}
-                    helperText={formik.errors.firstName}
-                    value={formik.values.firstName}
+                    error={formik.errors.name && formik.touched.name}
+                    helperText={formik.errors.name}
+                    value={formik.values.name}
                 />
                 <TextField
                     fullWidth
-                    id="lastName"
-                    label="Họ"
+                    id="email"
+                    label="Email"
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
-                    error={formik.errors.lastName && formik.touched.lastName}
-                    helperText={formik.errors.lastName}
-                    value={formik.values.lastName}
+                    error={formik.errors.email && formik.touched.email}
+                    helperText={formik.errors.email}
+                    value={formik.values.email}
+                />
+                <TextField
+                    fullWidth
+                    id="phoneNumber"
+                    label="Số điện thoại"
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    error={formik.errors.phoneNumber && formik.touched.phoneNumber}
+                    helperText={formik.errors.phoneNumber}
+                    value={formik.values.phoneNumber}
                 />
                 <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
-                    <TextField
-                        fullWidth
-                        id="phoneNumber"
-                        label="Số điện thoại"
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        error={formik.errors.phoneNumber && formik.touched.phoneNumber}
-                        helperText={formik.errors.phoneNumber}
-                        value={formik.values.phoneNumber}
-                    />
                     <TextField
                         fullWidth
                         id="password"
@@ -84,7 +106,29 @@ const RegisterForm = () => {
                             ),
                         }}
                     />
-
+                    <TextField
+                        fullWidth
+                        id="confirmPassword"
+                        label="Nhập lại mật khẩu"
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        error={formik.errors.confirmPassword && formik.touched.confirmPassword}
+                        helperText={formik.errors.confirmPassword}
+                        value={formik.values.confirmPassword}
+                        type={showPasswordConfirm ? "text" : "password"}
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment>
+                                    <IconButton
+                                        onClick={() => {
+                                            setShowPasswordConfirm(!showPasswordConfirm);
+                                        }}>
+                                        {showPasswordConfirm ? <Visibility /> : <VisibilityOff />}
+                                    </IconButton>
+                                </InputAdornment>
+                            ),
+                        }}
+                    />
                 </Stack>
                 <Button fullWidth color="inherit" size="large" type="submit" variant="contained" >
                     Đăng ký

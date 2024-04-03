@@ -35,21 +35,17 @@ const LoginForm = () => {
                 .required('Vui lòng nhập mật khẩu')
         }),
         onSubmit: async values => {
-            axios
+            await axios
                 .post("http://localhost:8080/auth/login", values)
                 .then(res => {
-
-                    localStorage.setItem("accessToken", res.token);
-                    navigate('/app');
+                    localStorage.setItem("accessToken", res.data.token);
+                    navigate("/app ")
                     dispatch(setUser({
-                        phoneNumber: '0969696969',
-                        avatar: 'avatar.jpeg',
-                        name: 'Phạm Quốc Anh Đức',
-                        _id: '123'
+                        _id: res.data.userId
                     }));
                 })
                 .catch(err => {
-                    enqueueSnackbar(`Đăng nhập thất bại`, {
+                    enqueueSnackbar(`Sai số điện thoại hoặc mật khẩu`, {
                         variant: 'error',
                         anchorOrigin: {
                             vertical: 'bottom',
