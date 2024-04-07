@@ -5,28 +5,28 @@ import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { setUser } from "./redux/slices/userSlice";
 import { SnackbarProvider, enqueueSnackbar } from 'notistack';
+import axios from "axios";
 
 export default function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
-    // if (token?.length) {
+    if (token) {
+      axios
+        .get("http://localhost:8080/auth/user", {
+          headers: {
+            Authorization: 'Bearer ' + token,
+          }
+        })
+        .then(res => {
 
-    //   dispatch(setUser({
-    //     phoneNumber: '0969696969',
-    //     avatar: 'avatar.jpeg',
-    //     name: 'Phạm Quốc Anh Đức',
-    //     _id: '123'
-    //   }))
-    // }
-    dispatch(setUser({
-      phoneNumber: '0969696969',
-      avatar: 'avatar.jpeg',
-      name: 'Phạm Quốc Anh Đức',
-      _id: '123'
-    }))
-
+          dispatch(setUser(res.data.user))
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    }
   }, [dispatch]);
 
   return (

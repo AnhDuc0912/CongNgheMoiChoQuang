@@ -35,16 +35,10 @@ const LoginForm = () => {
                 .required('Vui lòng nhập mật khẩu')
         }),
         onSubmit: async values => {
-            await axios
+            const responseLogin = await axios
                 .post("http://localhost:8080/auth/login", values)
-                .then(res => {
-                    localStorage.setItem("accessToken", res.data.token);
-                    navigate("/app ")
-                    dispatch(setUser({
-                        _id: res.data.userId
-                    }));
-                })
                 .catch(err => {
+                    console.log(err);
                     enqueueSnackbar(`Sai số điện thoại hoặc mật khẩu`, {
                         variant: 'error',
                         anchorOrigin: {
@@ -52,7 +46,13 @@ const LoginForm = () => {
                             horizontal: 'right'
                         }
                     });
+                    return;
                 });
+
+            const { token } = responseLogin.data;
+            console.log(token);
+            localStorage.setItem("accessToken", token);
+            navigate("/chat ");
         },
     });
 

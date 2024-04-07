@@ -7,7 +7,7 @@ import { useSnackbar } from "notistack";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const RegisterForm = () => {
+const   RegisterForm = () => {
     const { enqueueSnackbar } = useSnackbar();
     const [showPassword, setShowPassword] = useState(false);
     const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
@@ -38,6 +38,7 @@ const RegisterForm = () => {
                     localStorage.setItem('email', values.email);
                 })
                 .catch(err => {
+                    console.log(err);
                     enqueueSnackbar(`Đăng ký không thành công`, {
                         variant: 'error',
                         anchorOrigin: {

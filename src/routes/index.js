@@ -15,8 +15,8 @@ const Loadable = (Component) => (props) => {
     </Suspense>
   );
 };
-const GeneralApp = Loadable(
-  lazy(() => import("../pages/dashboard/GeneralApp"))
+const ChatPage = Loadable(
+  lazy(() => import("../pages/dashboard/ChatPage"))
 );
 
 export default function Router() {
@@ -37,7 +37,8 @@ export default function Router() {
       element: <DashboardLayout />,
       children: [
         { element: <Navigate to={DEFAULT_PATH} replace />, index: true },
-        { path: "/app", element: <GeneralApp /> },
+        { path: "/chat", element: <ChatPage /> },
+        { path: "/user", element: <ChatPage /> },
         { path: "404", element: <Page404 /> },
         { path: "*", element: <Navigate to="/404" replace /> },
       ],
