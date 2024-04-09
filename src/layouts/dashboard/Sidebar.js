@@ -2,15 +2,10 @@
 import { Box, Divider, IconButton, Stack } from "@mui/material";
 import {
     ChatCircleDots,
-    Gear,
-    GearSix,
-    Phone,
-    SignOut,
-    User,
     Users,
 } from "phosphor-react";
 import { useLocation } from 'react-router-dom';
-import { Link, Navigate } from "react-router-dom/dist";
+import { Link } from "react-router-dom/dist";
 
 const sideBarItems = [
     {
@@ -41,8 +36,8 @@ const Sidebar = () => {
                         borderRadius: 1.5,
                     }}>
                     <IconButton
-                        LinkComponent={Link}
-                        href={sideBarItem.path}
+                     LinkComponent={Link}
+                     to={sideBarItem.path}
                         sx={{
                             width: "max-content",
                             color: "black"

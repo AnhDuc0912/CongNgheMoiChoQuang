@@ -16,7 +16,7 @@ const DashboardLayout = () => {
   }
 
   return (
-    <>
+    <Stack direction="row">
       <Box
         p={2}
         sx={{
@@ -27,6 +27,7 @@ const DashboardLayout = () => {
 
         }}>
         <Stack
+
           direction="column"
           alignItems={"center"}
           justifyContent="space-between"
@@ -48,8 +49,14 @@ const DashboardLayout = () => {
           </Stack>
         </Stack>
       </Box>
-      <Outlet />
-    </>
+      <Box
+        sx={{
+          overflowY: 'scroll',
+          width: '100%'
+        }}>
+        <Outlet />
+      </Box>
+    </Stack>
   );
 };
 

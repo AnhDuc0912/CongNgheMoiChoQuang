@@ -1,12 +1,10 @@
 import { Suspense, lazy } from "react";
 import { Navigate, useRoutes } from "react-router-dom";
-
-// layouts
 import DashboardLayout from "../layouts/dashboard";
 import MainLayout from "../layouts/main";
-// config
 import { DEFAULT_PATH } from "../config";
 import LoadingScreen from "../components/LoadingScreen";
+import UserPage from "../pages/dashboard/UserPage";
 
 const Loadable = (Component) => (props) => {
   return (
@@ -38,7 +36,7 @@ export default function Router() {
       children: [
         { element: <Navigate to={DEFAULT_PATH} replace />, index: true },
         { path: "/chat", element: <ChatPage /> },
-        { path: "/user", element: <ChatPage /> },
+        { path: "/user", element: <UserPage /> },
         { path: "404", element: <Page404 /> },
         { path: "*", element: <Navigate to="/404" replace /> },
       ],
