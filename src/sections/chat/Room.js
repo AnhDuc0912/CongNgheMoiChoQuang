@@ -22,6 +22,15 @@ const Room = () => {
   const [messages, setMessages] = useState([])
 
   const onEnteredNewMsg = (msg) => {
+    if (messages.length >= 0) {
+      localStorage.setItem('messages', JSON.stringify([
+        {
+          content: msg,
+          seen: false,
+          sent: false,
+        },
+        ...messages]));
+    }
     setMessages([
       {
         content: msg,
@@ -33,7 +42,15 @@ const Room = () => {
 
   useEffect(() => {
 
+
   }, [messages]);
+
+  useEffect(() => {
+    var retrievedObject = localStorage.getItem('messages');
+    if (messages.length <= 0) {
+      setMessages(JSON.parse(retrievedObject));
+    }
+  }, []);
 
   return (
     <Stack

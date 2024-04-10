@@ -52,7 +52,7 @@ const LoginForm = () => {
             const { token } = responseLogin.data;
             console.log(token);
             localStorage.setItem("accessToken", token);
-            navigate("/chat/");
+            navigate("/chat/room1");
         },
     });
 
