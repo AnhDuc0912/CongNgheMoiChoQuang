@@ -38,7 +38,7 @@ const Textarea = styled(BaseTextareaAutosize)(
 const Composer = ({ onSubmitMsg }) => {
     const [content, setContent] = useState('');
     const ref = useRef();
-
+    
     const onEnter = () => {
         if (content.length > 0) {
             onSubmitMsg(content);

@@ -35,24 +35,24 @@ const LoginForm = () => {
                 .required('Vui lòng nhập mật khẩu')
         }),
         onSubmit: async values => {
-            await axios
-                .post("http://localhost:8080/auth/login", values)
-                .then(res => {
-                    localStorage.setItem("accessToken", res.data.token);
-                    navigate("/app")
-                    dispatch(setUser({
-                        _id: res.data.userId
-                    }));
-                })
-                .catch(err => {
-                    enqueueSnackbar(`Sai số điện thoại hoặc mật khẩu`, {
-                        variant: 'error',
-                        anchorOrigin: {
-                            vertical: 'bottom',
-                            horizontal: 'right'
-                        }
-                    });
-                });
+            // await axios
+            //     .post("http://localhost:8080/auth/login", values)
+            //     .then(res => {
+            //         localStorage.setItem("accessToken", res.data.token);
+            //         navigate("/app")
+            //         dispatch(setUser({
+            //             _id: res.data.userId
+            //         }));
+            //     })
+            //     .catch(err => {
+            //         enqueueSnackbar(`Sai số điện thoại hoặc mật khẩu`, {
+            //             variant: 'error',
+            //             anchorOrigin: {
+            //                 vertical: 'bottom',
+            //                 horizontal: 'right'
+            //             }
+            //         });
+            //     });
 
             localStorage.setItem("accessToken", "nguyenthilananh");
             navigate("/chat ");

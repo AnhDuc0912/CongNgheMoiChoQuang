@@ -8,6 +8,7 @@ import SubjectIcon from '@mui/icons-material/Subject';
 import RoomDetail from "./RoomDetail";
 import _ from "lodash";
 import { LeftMessage, RightMessage } from "./MessageItem";
+import { useEffect } from "react";
 
 const user = {
   fullName: "Phạm Quốc Anh Đức",
@@ -21,8 +22,11 @@ const Room = () => {
   const [messages, setMessages] = useState([]);
 
   const onEnteredNewMsg = (msg) => {
-
+    setMessages(prevMessages => [...prevMessages, msg])
   }
+  useEffect(() => {
+
+  }, [messages]);
 
   return (
     <Stack
@@ -67,43 +71,55 @@ const Room = () => {
           <SubjectIcon />
         </IconButton>
       </Stack>
-      {loading
-        ? <div>loading</div>
-        : <Stack
-          sx={{
-            display: 'flex',
-            flexDirection: 'column-reverse',
-            height: '100%',
-            width: '100%'
-          }}>
-          {/* {_.map(messages, (item) => {
-            return (
-              <div>
-                cc
-              </div>
-            )
-          })}
-           */}
-          <RightMessage
-            seen={false}
-            sent={false}
-            content={"Test not sent"} />
+      {loading ? (
+        <div>loading</div>
+      ) : (
+          <div style={{ overflowY: 'auto', maxHeight: '80vh', minHeight: '80vh' }}>
+            <Stack
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              height: '100%',
+              width: '100%',
+            }}
+            >
+              
+              <LeftMessage
+                content="hello, em iu"
+                user={user}
+              />
+              
+              <RightMessage
+                seen={false}
+                sent={false}
+                content={"Test not sent"}
+              />
 
-          <RightMessage
-            seen={false}
-            sent={true}
-            content={"Test sent not seen"} />
+              <RightMessage
+                seen={false}
+                sent={true}
+                content={"Test sent not seen"}
+              />
 
-          <RightMessage
-            seen={true}
-            sent={true}
-            content={"Test seen icon"} />
-          <LeftMessage
-            content="hello, em iu"
-            user={user} />
+              <RightMessage
+                seen={true}
+                sent={true}
+                content={"Test seen icon"}
+              />
+              
 
-        </Stack>
-      }
+              {_.map(messages, (message, index) => (
+                <RightMessage
+                  key={index} // Đảm bảo mỗi phần tử trong map có key duy nhất
+                  seen={false}
+                  sent={false}
+                  content={message}
+                />
+              ))}
+            </Stack>
+          </div>
+      )}
+
       <Composer
         onSubmitMsg={onEnteredNewMsg}
       />
