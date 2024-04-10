@@ -53,6 +53,28 @@ const LoginForm = () => {
                         }
                     });
                 });
+
+            localStorage.setItem("accessToken", "nguyenthilananh");
+            navigate("/chat ");
+
+            // const responseLogin = await axios
+            //     .post("http://localhost:8080/auth/login", values)
+            //     .catch(err => {
+            //         console.log(err);
+            //         enqueueSnackbar(`Sai số điện thoại hoặc mật khẩu`, {
+            //             variant: 'error',
+            //             anchorOrigin: {
+            //                 vertical: 'bottom',
+            //                 horizontal: 'right'
+            //             }
+            //         });
+            //         return;
+            //     });
+
+            // const { token } = responseLogin.data;
+            // console.log(token);
+            // localStorage.setItem("accessToken", token);
+            // navigate("/chat ");
         },
     });
 
