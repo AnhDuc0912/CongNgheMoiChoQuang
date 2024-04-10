@@ -39,7 +39,7 @@ const LoginForm = () => {
                 .post("http://localhost:8080/auth/login", values)
                 .then(res => {
                     localStorage.setItem("accessToken", res.data.token);
-                    navigate("/app ")
+                    navigate("/app")
                     dispatch(setUser({
                         _id: res.data.userId
                     }));
