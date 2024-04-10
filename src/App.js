@@ -12,25 +12,24 @@ export default function App() {
 
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
-    // if (token) {
-    //   axios
-    //     .get("http://localhost:8080/auth/user", {
-    //       headers: {
-    //         Authorization: 'Bearer ' + token,
-    //       }
-    //     })
-    //     .then(res => {
-
-    //       // dispatch(setUser(res.data.user))
-    //     })
-    //     .catch(err => {
-    //       console.log(err);
-    //     });
-    // }
-    dispatch(setUser({
-      name: "Lan Anh",
-      id: 1
-    }))
+    if (token) {
+      axios
+        .get("http://localhost:8080/auth/user", {
+          headers: {
+            Authorization: 'Bearer ' + token,
+          }
+        })
+        .then(res => {
+          dispatch(setUser(res.data.user))
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    }
+    // dispatch(setUser({
+    //   name: "Lan Anh",
+    //   id: 1
+    // }))
   }, [dispatch]);
 
   return (
