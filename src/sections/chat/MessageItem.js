@@ -1,4 +1,4 @@
-import { Box, Typography, Stack, Avatar, IconButton } from "@mui/material";
+import { Box, Typography, Stack, Avatar } from "@mui/material";
 import DoneIcon from '@mui/icons-material/Done';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 
@@ -66,7 +66,7 @@ export const RightMessage = ({ content, seen = false, sent = true }) => {
                     {content}
                 </Typography>
                 <Stack
-                    justifyContent="flex-end"
+                    justifyContent="space-between"
                     alignItems="center"
                     sx={{ width: '100%' }}
                     direction="row">

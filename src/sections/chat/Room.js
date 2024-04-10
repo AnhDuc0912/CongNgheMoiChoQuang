@@ -19,11 +19,18 @@ const Room = () => {
   const { roomId } = useParams();
   const [loading, setLoading] = useState(false);
   const [showRoomInfo, setShowRoomInfo] = useState(false);
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState([])
 
   const onEnteredNewMsg = (msg) => {
-    setMessages(prevMessages => [...prevMessages, msg])
+    setMessages([
+      {
+        content: msg,
+        seen: false,
+        sent: false,
+      },
+      ...messages])
   }
+
   useEffect(() => {
 
   }, [messages]);
@@ -32,6 +39,7 @@ const Room = () => {
     <Stack
       sx={{
         width: '100%',
+        height: '100vh',
         backgroundColor: 'whitesmoke'
       }}>
       <Stack
@@ -74,50 +82,41 @@ const Room = () => {
       {loading ? (
         <div>loading</div>
       ) : (
-          <div style={{ overflowY: 'auto', maxHeight: '80vh', minHeight: '80vh' }}>
-            <Stack
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              height: '100%',
-              width: '100%',
-            }}
-            >
-              
-              <LeftMessage
-                content="hello, em iu"
-                user={user}
-              />
-              
-              <RightMessage
-                seen={false}
-                sent={false}
-                content={"Test not sent"}
-              />
-
-              <RightMessage
-                seen={false}
-                sent={true}
-                content={"Test sent not seen"}
-              />
-
-              <RightMessage
-                seen={true}
-                sent={true}
-                content={"Test seen icon"}
-              />
-              
-
-              {_.map(messages, (message, index) => (
-                <RightMessage
-                  key={index} // Đảm bảo mỗi phần tử trong map có key duy nhất
-                  seen={false}
-                  sent={false}
-                  content={message}
-                />
-              ))}
-            </Stack>
-          </div>
+        <Stack
+          sx={{
+            display: 'flex',
+            overflowX: 'none',
+            overflowY: 'auto',
+            flexDirection: 'column-reverse',
+            height: '100%',
+            width: '100%',
+          }}>
+          {_.map(messages, (message, index) => (
+            <RightMessage
+              key={index}
+              {...message}
+            />
+          ))}
+          <RightMessage
+            seen={false}
+            sent={false}
+            content={"Test not sent"}
+          />
+          <RightMessage
+            seen={false}
+            sent={true}
+            content={"Test sent not seen"}
+          />
+          <RightMessage
+            seen={true}
+            sent={true}
+            content={"Test seen icon"}
+          />
+          <LeftMessage
+            content="Test people sent"
+            user={user}
+          />
+        </Stack>
       )}
 
       <Composer

@@ -32,7 +32,7 @@ const   RegisterForm = () => {
         }),
         onSubmit: async values => {
             await axios
-                .post("http://localhost:8080/auth/signup", values)
+                .post("http://localhost:8000/auth/signup", values)
                 .then(res => {
                     navigate('/auth/verify')
                     localStorage.setItem('email', values.email);
