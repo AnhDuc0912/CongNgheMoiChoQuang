@@ -29,7 +29,7 @@ const VerifyForm = () => {
         onSubmit: async values => {
             console.log(values);
             await axios
-                .post("http://localhost:8080/auth/verify", values)
+                .post("http://localhost:8000/auth/verify", values)
                 .then(res => {
                     navigate("/auth/login")
                 })

@@ -5,6 +5,8 @@ import Room from "../../sections/chat/Room";
 import { useEffect } from "react";
 import { Link as RouterLink, useNavigate, useParams } from "react-router-dom";
 import StartNewChat from "../../sections/chat/StartNewChat";
+import { io } from "socket.io-client";
+import connectSocket from "../../utils/socket/connectSocket" ;
 
 const chatData = [
   {
@@ -39,6 +41,8 @@ const Chats = () => {
 
   useEffect(() => {
     setRooms(chatData)
+
+    connectSocket("https://chat.hayugo.edu.vn/");
   }, [])
 
   return (
