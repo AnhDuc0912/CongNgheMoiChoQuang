@@ -3,14 +3,18 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
     isLoggedIn: false,
     user: null,
-    isLoading: false,
+    isLoading: true,
 }
 
 const slice = createSlice({
     name: "user",
     initialState,
     reducers: {
+        setLoading: (state) => {
+            state.isLoading = true;
+        },
         setUser: (state, action) => {
+            state.isLoading = false;
             state.user = action.payload;
         },
         stopLoading: (state) => {
@@ -23,5 +27,5 @@ const slice = createSlice({
     }
 })
 
-export const { setUser, stopLoading, logout } = slice.actions;
+export const { setUser, stopLoading, logout, setLoading } = slice.actions;
 export default slice.reducer;
