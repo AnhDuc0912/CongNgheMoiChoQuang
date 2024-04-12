@@ -27,10 +27,6 @@ export default function App() {
     //       console.log(err);
     //     });
     // }
-    dispatch(setUser({
-      name: "Lan Anh",
-      id: 1
-    }))
   }, [dispatch]);
 
   return (
