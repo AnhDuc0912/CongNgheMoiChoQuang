@@ -32,7 +32,7 @@ const LoginForm = () => {
                 .required('Vui lòng nhập mật khẩu')
         }),
         onSubmit: async values => {
-            axios.post("https://chat.hayugo.edu.vn/api/auth/login", values)
+            axios.post("http://localhost:4000/api/auth/login", values)
                 .then((res) => {
                     const { token } = res.data;
 
@@ -60,7 +60,7 @@ const LoginForm = () => {
                         return;
                     }
                     const { error } = err.response.data;
-                    if (error === 'Sai mật khẩu') {
+                    if (error === 'Password is incorrect.') {
                         enqueueSnackbar(`Sai mật khẩu`, {
                             variant: 'error',
                             anchorOrigin: {
@@ -68,8 +68,16 @@ const LoginForm = () => {
                                 horizontal: 'right'
                             }
                         });
-                    } else if (error === 'user không tồn tại trên hệ thống') {
+                    } else if (error === 'User not found.') {
                         enqueueSnackbar(`User không tồn tại trên hệ thống`, {
+                            variant: 'error',
+                            anchorOrigin: {
+                                vertical: 'bottom',
+                                horizontal: 'right'
+                            }
+                        });
+                    } else if (error === 'Account has not been verified.') {
+                        enqueueSnackbar(`Tài khoản chưa được xác thực qua email`, {
                             variant: 'error',
                             anchorOrigin: {
                                 vertical: 'bottom',

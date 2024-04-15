@@ -1,56 +1,118 @@
-import { Box, Typography, Stack, Drawer } from "@mui/material";
+import { Box, Stack, Drawer } from "@mui/material";
 import { useParams } from "react-router-dom";
-import Avatar from '@mui/material/Avatar';
 import { useState } from "react";
 import Composer from "./Composer";
-import IconButton from '@mui/material/IconButton';
-import SubjectIcon from '@mui/icons-material/Subject';
 import RoomDetail from "./RoomDetail";
 import _ from "lodash";
 import { LeftMessage, RightMessage } from "./MessageItem";
 import { useEffect } from "react";
+import { socketManager } from '../../socket';
+import { useSelector } from "react-redux";
+import RoomHeader from "./RoomHeader";
 
-const user = {
-  fullName: "Phạm Quốc Anh Đức",
-  avatar: "https://hayugo.edu.vn/storage/image/0cb9d23cfdd77a7869c0e6c073237ad0.png"
-}
 
 const Room = () => {
   const { roomId } = useParams();
+  const socket = socketManager('chatRoom');
+  const { user } = useSelector((state) => state.user);
+  const [connected, setConnected] = useState(false);
+
   const [loading, setLoading] = useState(false);
   const [showRoomInfo, setShowRoomInfo] = useState(false);
-  const [messages, setMessages] = useState([])
 
-  const onEnteredNewMsg = (msg) => {
-    if (messages.length >= 0) {
-      localStorage.setItem('messages', JSON.stringify([
-        {
-          content: msg,
-          seen: false,
-          sent: false,
-        },
-        ...messages]));
+  const [room, setRoom] = useState();
+  const [members, setMembers] = useState([]);
+  const [messages, setMessages] = useState([]);
+
+  const getRoomHeader = () => {
+    if (!room) {
+      return {
+        avatar: '',
+        title: 'Room mất',
+        subtitle: "Đang online"
+      }
     }
-    setMessages([
-      {
-        content: msg,
-        seen: false,
-        sent: false,
-      },
-      ...messages])
+
+    if (room.singleRoom) {
+      const { avatar, fullName } = members.find(x => x._id !== user._id);
+      return {
+        avatar: avatar,
+        title: fullName,
+        subtitle: "Đang online"
+      }
+    }
+    return {
+      avatar: '',
+      title: 'Chat nhóm title',
+      subtitle: "35 thành viên"
+    }
+  }
+
+  const onSentMsg = ({ sentMsg }) => {
+    console.log(sentMsg);
+  }
+
+  const onEnteredNewMsg = async (msg) => {
+    if (messages.length >= 0) {
+      socket.emit('user.sendMsg', roomId, {
+        type: 'text',
+        content: msg
+      }, onSentMsg);
+    }
+  }
+
+  const onConnected = () => {
+    setConnected(true);
+    setLoading(false);
+    console.log("onConnected");
+  }
+
+  const onDisconnected = () => {
+    setLoading(false);
+    setConnected(false);
+    console.log("onDisconnected");
+  }
+
+  const onJoined = (response) => {
+    setMembers(response.members)
+    setRoom(response.room);
+    setMessages(response.messages)
+  }
+
+  const onReceiveIncommingMsg = async (roomId, msg) => {
+    setMessages((pre) => [msg, ...pre]);
+    console.log(msg);
   }
 
   useEffect(() => {
+    setLoading(true);
+    socket.on('connect', onConnected);
+    socket.on('disconnect', onDisconnected);
 
-
-  }, [messages]);
-
-  useEffect(() => {
-    var retrievedObject = localStorage.getItem('messages');
-    if (messages.length <= 0) {
-      setMessages(JSON.parse(retrievedObject));
+    return () => {
+      setLoading(false);
+      socket.off('connect', onConnected);
+      socket.off('disconnect', onDisconnected);
     }
   }, []);
+
+  useEffect(() => {
+    socket.emit('join', roomId, onJoined);
+
+    socket.on('incomingMsg', onReceiveIncommingMsg);
+    socket.io.on("error", (error) => {
+      console.log(error)
+      socket.connect();
+    });
+
+    return () => {
+      socket.off('join');
+      socket.off('incomingMsg');
+      socket.emit('leave', roomId);
+      socket.off('stopTyping', () => { });
+      socket.off('typing', () => { });
+    };
+  }, [roomId]);
 
   return (
     <Stack
@@ -59,43 +121,10 @@ const Room = () => {
         height: '100vh',
         backgroundColor: 'whitesmoke'
       }}>
-      <Stack
-        px="15px"
-        py="10px"
-        spacing="15px"
-        bgcolor="rgba(255, 255, 255, 0.9)"
-        direction="row">
-        <Avatar
-          alt={user.fullName}
-          src={user.avatar} />
-        <Box sx={{ width: '100%' }}>
-          <Typography
-            sx={{ width: '100%', color: 'black', fontSize: "16px" }}
-            variant="subtitle1">
-            {user.fullName}
-          </Typography>
-          <Stack
-            sx={{ width: '100%' }}
-            justifyContent="space-between"
-            spacing="10px"
-            direction="row">
-            <Typography
-              sx={{
-                fontWeight: "500",
-                color: '#696969',
-              }}
-              fontSize="14px"
-              variant="body1">
-              {`Online`}
-            </Typography>
-          </Stack>
-        </Box>
-        <IconButton
-          onClick={() => setShowRoomInfo(!showRoomInfo)}
-          aria-label="emoji">
-          <SubjectIcon />
-        </IconButton>
-      </Stack>
+      <RoomHeader header={getRoomHeader()} />
+      <Box>
+        {connected ? "Kết nối thành công" : "kết nối không thành công"}
+      </Box>
       {loading ? (
         <div>loading</div>
       ) : (
@@ -108,31 +137,22 @@ const Room = () => {
             height: '100%',
             width: '100%',
           }}>
-          {_.map(messages, (message, index) => (
-            <RightMessage
-              key={index}
-              {...message}
-            />
-          ))}
-          <RightMessage
-            seen={false}
-            sent={false}
-            content={"Test not sent"}
-          />
-          <RightMessage
-            seen={false}
-            sent={true}
-            content={"Test sent not seen"}
-          />
-          <RightMessage
-            seen={true}
-            sent={true}
-            content={"Test seen icon"}
-          />
-          <LeftMessage
-            content="Test people sent"
-            user={user}
-          />
+          {_.map(messages, (message, index) => {
+            if (message.creatorId === user._id) {
+              return (
+                <RightMessage
+                  key={index}
+                  {...message}
+                />
+              )
+            }
+            return (
+              <LeftMessage
+                content={message.content}
+                user={user}
+              />
+            )
+          })}
         </Stack>
       )}
 
