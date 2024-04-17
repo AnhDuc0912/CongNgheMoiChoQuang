@@ -5,6 +5,7 @@ import MainLayout from "../layouts/main";
 import { DEFAULT_PATH } from "../config";
 import LoadingScreen from "../components/LoadingScreen";
 import UserPage from "../pages/dashboard/UserPage";
+import ProfilePage from "../pages/dashboard/ProfilePage";
 
 const Loadable = (Component) => (props) => {
   return (
@@ -38,6 +39,7 @@ export default function Router() {
         { path: "/chat/", element: <ChatPage /> },
         { path: "/chat/:roomId", element: <ChatPage /> },
         { path: "/user", element: <UserPage /> },
+        { path: "/user/:userId", element: <ProfilePage/>},
         { path: "404", element: <Page404 /> },
         { path: "*", element: <Navigate to="/404" replace /> },
       ],

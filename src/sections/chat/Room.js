@@ -55,6 +55,7 @@ const Room = () => {
 
   const onEnteredNewMsg = async (msg) => {
     if (messages.length >= 0) {
+      console.log(roomId);
       socket.emit('user.sendMsg', roomId, {
         type: 'text',
         content: msg
