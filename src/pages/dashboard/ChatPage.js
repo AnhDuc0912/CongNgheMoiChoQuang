@@ -5,20 +5,8 @@ import Room from "../../sections/chat/Room";
 import { useEffect } from "react";
 import { Link as RouterLink, useNavigate, useParams } from "react-router-dom";
 import StartNewChat from "../../sections/chat/StartNewChat";
+import axios from "axios";
 
-const chatData = [
-  {
-    roomId: '661bc76defd1b56f4f8194a6',
-    unreadMsgCount: 3,
-    user: {
-      fullName: "Phạm Quốc Anh Đức",
-      avatar: "https://hayugo.edu.vn/storage/image/0cb9d23cfdd77a7869c0e6c073237ad0.png"
-    },
-    lastMsg: {
-      content: "Hello, how are you today?"
-    }
-  },
-]
 
 const Chats = () => {
   const navigate = useNavigate();
@@ -27,7 +15,19 @@ const Chats = () => {
 
 
   useEffect(() => {
-    setRooms(chatData)
+    const token = localStorage.getItem("accessToken");
+    axios
+      .get("http://localhost:4000/api/room/last", {
+        headers: {
+          Authorization: 'Bearer ' + token,
+        }
+      })
+      .then((res) => {
+        setRooms(res.data.rooms)
+      })
+      .catch((err) => {
+        console.log(err);
+      })
   }, [])
 
   return (
