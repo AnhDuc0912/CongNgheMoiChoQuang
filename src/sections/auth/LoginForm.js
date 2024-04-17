@@ -32,7 +32,7 @@ const LoginForm = () => {
                 .required('Vui lòng nhập mật khẩu')
         }),
         onSubmit: async values => {
-            axios.post("https://chat.hayugo.edu.vn/api/auth/login", values)
+            axios.post("https://localhost:4000/api/auth/login", values)
                 .then((res) => {
                     const { token } = res.data;
 
