@@ -9,9 +9,12 @@ const RoomDetail = ({
   user,
 
 }) => {
-
+  
   const [muted, setMuted] = useState(false);
   const [pinned, setPinned] = useState(false);
+
+
+
   return (
     <Box sx={{ width: '400px', height: '100%' }}>
       <Box

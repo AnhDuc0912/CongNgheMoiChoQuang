@@ -10,7 +10,7 @@ import connectSocket from "../../utils/socket/connectSocket" ;
 
 const chatData = [
   {
-    roomId: 'room1',
+    roomId: '661bc76defd1b56f4f8194a6',
     unreadMsgCount: 3,
     user: {
       fullName: "Phạm Quốc Anh Đức",
@@ -20,17 +20,6 @@ const chatData = [
       content: "Hello, how are you today?"
     }
   },
-  {
-    roomId: 'room2',
-    unreadMsgCount: 0,
-    user: {
-      fullName: "Nguyễn Thị Lan Anh",
-      avatar: "https://hayugo.edu.vn/storage/image/0cb9d23cfdd77a7869c0e6c073237ad0.png"
-    },
-    lastMsg: {
-      content: "Hello, how are you today?"
-    }
-  }
 ]
 
 const Chats = () => {

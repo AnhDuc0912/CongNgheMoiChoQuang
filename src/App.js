@@ -12,21 +12,20 @@ export default function App() {
   const { enqueueSnackbar } = useSnackbar();
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
-
-
     if (token) {
       dispatch(setLoading());
       axios
-        .get("https://chat.hayugo.edu.vn/api/user", {
+        .get("http://localhost:4000/api/user", {
           headers: {
             Authorization: 'Bearer ' + token,
           }
         })
         .then(res => {
+          console.log(res.data.user);
           dispatch(setUser(res.data.user));
         })
         .catch(err => {
-          
+          console.log(err);
           enqueueSnackbar(`Không thể lấy thông tin người dùng. Vui lòng đăng nhập lại`, {
             variant: 'error',
             anchorOrigin: {
@@ -38,7 +37,6 @@ export default function App() {
         })
         .finally(() => dispatch(stopLoading()))
     }
-
   }, [dispatch]);
 
   return (
