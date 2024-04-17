@@ -4,28 +4,37 @@ import ThemeSettings from './components/settings';
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { setUser, setLoading, stopLoading } from "./redux/slices/userSlice";
-import { SnackbarProvider, enqueueSnackbar } from 'notistack';
+import { SnackbarProvider, useSnackbar } from 'notistack';
 import axios from "axios";
 
 export default function App() {
   const dispatch = useDispatch();
-
+  const { enqueueSnackbar } = useSnackbar();
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
-    console.log("App.Starting");
-    dispatch(setLoading())
+
+
     if (token) {
+      dispatch(setLoading());
       axios
-        .get("http://localhost:8000/auth/user", {
+        .get("https://chat.hayugo.edu.vn/api/user", {
           headers: {
             Authorization: 'Bearer ' + token,
           }
         })
         .then(res => {
-          dispatch(setUser(res.data.user))
+          dispatch(setUser(res.data.user));
         })
         .catch(err => {
-          console.log(err);
+          
+          enqueueSnackbar(`Không thể lấy thông tin người dùng. Vui lòng đăng nhập lại`, {
+            variant: 'error',
+            anchorOrigin: {
+              vertical: 'bottom',
+              horizontal: 'right'
+            }
+          });
+
         })
         .finally(() => dispatch(stopLoading()))
     }
@@ -35,7 +44,8 @@ export default function App() {
   return (
     <ThemeProvider>
       <ThemeSettings>
-        <SnackbarProvider>
+        <SnackbarProvider
+        >
           <Router />
         </SnackbarProvider>
       </ThemeSettings>

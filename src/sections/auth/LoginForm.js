@@ -10,14 +10,11 @@ import {
     TextField,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { useDispatch } from "react-redux";
 import axios from "axios";
 import { useFormik } from "formik"
-import { setUser } from "../../redux/slices/userSlice";
 import { useSnackbar } from "notistack";
 
 const LoginForm = () => {
-    const dispatch = useDispatch();
     const { enqueueSnackbar } = useSnackbar();
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
@@ -35,24 +32,59 @@ const LoginForm = () => {
                 .required('Vui lòng nhập mật khẩu')
         }),
         onSubmit: async values => {
-            const responseLogin = await axios
-                .post("http://localhost:8000/auth/login", values)
-                .catch(err => {
-                    console.log(err);
-                    enqueueSnackbar(`Sai số điện thoại hoặc mật khẩu`, {
-                        variant: 'error',
+            axios.post("https://chat.hayugo.edu.vn/api/auth/login", values)
+                .then((res) => {
+                    const { token } = res.data;
+
+                    enqueueSnackbar(`Đăng nhập thành công`, {
+                        variant: 'success',
                         anchorOrigin: {
                             vertical: 'bottom',
                             horizontal: 'right'
                         }
                     });
-                    return;
-                });
 
-            const { token } = responseLogin.data;
-            console.log(token);
-            localStorage.setItem("accessToken", token);
-            navigate("/chat/room1");
+                    localStorage.setItem("accessToken", token);
+                    navigate("/chat/room1");
+                })
+                .catch(err => {
+                    if (!err.response) {
+                        enqueueSnackbar(`Không thể kết nối đến máy chủ`, {
+                            variant: 'error',
+                            anchorOrigin: {
+                                vertical: 'bottom',
+                                horizontal: 'right'
+                            }
+                        });
+                        return;
+                    }
+                    const { error } = err.response.data;
+                    if (error === 'Sai mật khẩu') {
+                        enqueueSnackbar(`Sai mật khẩu`, {
+                            variant: 'error',
+                            anchorOrigin: {
+                                vertical: 'bottom',
+                                horizontal: 'right'
+                            }
+                        });
+                    } else if (error === 'user không tồn tại trên hệ thống') {
+                        enqueueSnackbar(`User không tồn tại trên hệ thống`, {
+                            variant: 'error',
+                            anchorOrigin: {
+                                vertical: 'bottom',
+                                horizontal: 'right'
+                            }
+                        });
+                    } else {
+                        enqueueSnackbar(error, {
+                            variant: 'error',
+                            anchorOrigin: {
+                                vertical: 'bottom',
+                                horizontal: 'right'
+                            }
+                        });
+                    }
+                });
         },
     });
 

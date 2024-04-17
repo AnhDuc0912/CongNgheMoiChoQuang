@@ -41,8 +41,6 @@ const Chats = () => {
 
   useEffect(() => {
     setRooms(chatData)
-
-    connectSocket("https://chat.hayugo.edu.vn/");
   }, [])
 
   return (
