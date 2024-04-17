@@ -12,8 +12,6 @@ export default function App() {
   const { enqueueSnackbar } = useSnackbar();
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
-
-    
     if (token) {
       dispatch(setLoading());
       axios

@@ -13,8 +13,10 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import axios from "axios";
 import { useFormik } from "formik"
 import { useSnackbar } from "notistack";
+import { useDispatch } from "react-redux";
 
 const LoginForm = () => {
+    const dispatch = useDispatch();
     const { enqueueSnackbar } = useSnackbar();
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
@@ -44,9 +46,9 @@ const LoginForm = () => {
                         }
                     });
 
-                    console.log(token);
+                    
                     localStorage.setItem("accessToken", token);
-                    navigate("/chat/room1");
+                    navigate("/chat/");
                 })
                 .catch(err => {
                     if (!err.response) {
