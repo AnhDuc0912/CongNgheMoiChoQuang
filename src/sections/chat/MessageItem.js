@@ -1,4 +1,4 @@
-import { Box, Typography, Stack, Avatar } from "@mui/material";
+import { Typography, Stack, Avatar } from "@mui/material";
 import DoneIcon from '@mui/icons-material/Done';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 
@@ -20,6 +20,7 @@ export const LeftMessage = ({ user, content }) => {
           backgroundColor: 'white'
         }}
         direction="column">
+        <strong>{user.fullName}</strong>
         <Typography
           sx={{ maxWidth: '700px', minWidth: '100px' }}
           color="black"

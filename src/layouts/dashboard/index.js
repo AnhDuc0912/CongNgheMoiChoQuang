@@ -10,6 +10,10 @@ import Sidebar from "./Sidebar";
 const DashboardLayout = () => {
   const theme = useTheme();
   const { user, isLoading } = useSelector((state) => state.user);
+
+  
+
+
   if (!isLoading && !user) {
     return <Navigate to="/auth/login" replace />;
   }

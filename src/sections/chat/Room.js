@@ -1,4 +1,4 @@
-import { Box, Stack, Drawer } from "@mui/material";
+import { Box, Stack, Drawer, CircularProgress, LinearProgress, Alert } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { useState } from "react";
 import Composer from "./Composer";
@@ -9,14 +9,15 @@ import { useEffect } from "react";
 import { socketManager } from '../../socket';
 import { useSelector } from "react-redux";
 import RoomHeader from "./RoomHeader";
+import axios from "axios";
 
 
 const Room = () => {
   const { roomId } = useParams();
   const socket = socketManager('chatRoom');
-  const { user } = useSelector((state) => state.user);
+  const [messageTimeout, setMessageTimeout] = useState(false);
+  let { user } = useSelector((state) => state.user);
   const [connected, setConnected] = useState(false);
-
   const [loading, setLoading] = useState(false);
   const [showRoomInfo, setShowRoomInfo] = useState(false);
 
@@ -54,6 +55,7 @@ const Room = () => {
 
   const onEnteredNewMsg = async (msg) => {
     if (messages.length >= 0) {
+      console.log(roomId);
       socket.emit('user.sendMsg', roomId, {
         type: 'text',
         content: msg
@@ -74,15 +76,31 @@ const Room = () => {
   }
 
   const onJoined = (response) => {
-    setMembers(response.members)
-    setRoom(response.room);
-    setMessages(response.messages)
+    if (response) {
+      setConnected(true);
+      setLoading(false);
+      setMembers(response.members)
+      setRoom(response.room);
+      setMessages(response.messages)
+    }
   }
 
   const onReceiveIncommingMsg = async (roomId, msg) => {
     setMessages((pre) => [msg, ...pre]);
     console.log(msg);
   }
+
+  
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setMessageTimeout(true);
+    }, 3000);
+
+    return () => {
+      clearTimeout(timeoutId);
+      setMessageTimeout(false);
+    };
+  }, [connected]);
 
   useEffect(() => {
     setLoading(true);
@@ -123,10 +141,20 @@ const Room = () => {
       }}>
       <RoomHeader header={getRoomHeader()} />
       <Box>
-        {connected ? "Kết nối thành công" : "kết nối không thành công"}
+        {connected ? 
+          messageTimeout ?
+          <Alert sx={{ visibility: "hidden" }} severity="success">Kết nối thành công</Alert>
+          :
+          <Alert severity="success">Kết nối thành công</Alert>
+         : 
+          loading ? null : <Alert severity="warning">Mất kết nối</Alert>
+        }
       </Box>
       {loading ? (
-        <div>loading</div>
+        <>
+          <Alert severity="info">Đang kết nối</Alert>
+          <LinearProgress color="info" />
+        </>
       ) : (
         <Stack
           sx={{
@@ -149,7 +177,7 @@ const Room = () => {
             return (
               <LeftMessage
                 content={message.content}
-                user={user}
+                user={members.find(x => x._id === message.creatorId)}
               />
             )
           })}
