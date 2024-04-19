@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { makeStyles } from "@mui/styles";
 import {
   Avatar,
@@ -8,9 +8,10 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Form, useFormik } from "formik";
+import { useFormik } from "formik";
 import axios from "axios";
 import * as Yup from "yup";
+import { enqueueSnackbar } from "notistack";
 
 const useStyles = makeStyles((theme) => ({
   modal: {
@@ -38,14 +39,6 @@ const useStyles = makeStyles((theme) => ({
 
 const ProfileModal = ({ open, onClose }) => {
   const classes = useStyles();
-  const [updateScreen, setUpdateScreen] = useState(false);
-
-  const updateProfile = () => {
-    if (true) {
-      onClose();
-    } else {
-    }
-  };
 
   const formik = useFormik({
     enableReinitialize: true,
@@ -62,8 +55,35 @@ const ProfileModal = ({ open, onClose }) => {
         .required("Vui lòng nhập email"),
     }),
 
-    onSubmit: async (value) => {
-      alert("vui vẻ nha");
+    onSubmit: async (values) => {
+      const token = localStorage.getItem("accessToken");
+      try {
+        axios.put("http://localhost:4000/api/user", values, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        enqueueSnackbar(`Cập nhật tài khoản thành công`, {
+          variant: "success",
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "right",
+          },
+        });
+
+        onClose(false);
+      } catch (error) {
+        if (!error.response) {
+          enqueueSnackbar(`Không thể cập nhập tài khoản`, {
+            variant: "error",
+            anchorOrigin: {
+              vertical: "bottom",
+              horizontal: "right",
+            },
+          });
+          return;
+        }
+      }
     },
   });
 
@@ -101,7 +121,9 @@ const ProfileModal = ({ open, onClose }) => {
       //  disableBackdropClick={true}
       open={open}
       scroll={"body"}
-      onClose={onClose}
+      onClose={() => {
+        onClose();
+      }}
       aria-labelledby="profile-modal-title"
       aria-describedby="profile-modal-description"
       className={classes.modal}
@@ -127,7 +149,8 @@ const ProfileModal = ({ open, onClose }) => {
             label="Họ và tên"
             fullWidth
             variant="outlined"
-            defaultValue={formik.values.fullName}
+            onChange={formik.handleChange}
+            value={formik.values.fullName}
           />
           <TextField
             id="email"
@@ -135,7 +158,8 @@ const ProfileModal = ({ open, onClose }) => {
             label="Email"
             fullWidth
             variant="outlined"
-            defaultValue={formik.values.email}
+            onChange={formik.handleChange}
+            value={formik.values.email}
           />
           <TextField
             id="phoneNumber"
@@ -143,17 +167,10 @@ const ProfileModal = ({ open, onClose }) => {
             label="Điện thoại"
             fullWidth
             variant="outlined"
-            defaultValue={formik.values.phoneNumber}
+            onChange={formik.handleChange}
+            value={formik.values.phoneNumber}
           />
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            fullWidth
-            onClick={() => {
-              setUpdateScreen(true);
-            }}
-          >
+          <Button type="submit" variant="contained" color="primary" fullWidth>
             Cập nhật
           </Button>
         </Stack>
