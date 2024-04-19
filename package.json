@@ -19,6 +19,7 @@
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.6.8",
     "emoji-mart": "^5.2.2",
+    "emoji-picker-react": "^4.9.2",
     "formik": "^2.4.5",
     "framer-motion": "^7.5.3",
     "lodash": "^4.17.21",
