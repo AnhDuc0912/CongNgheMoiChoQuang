@@ -4,20 +4,29 @@ import {
   IconButton,
   List,
   ListItem,
+  ListItemButton,
   ListItemIcon,
   ListItemText,
   Popover,
   Stack,
 } from "@mui/material";
 import { ChatCircleDots, Users } from "phosphor-react";
-import { useLocation } from "react-router-dom";
+import {
+  unstable_HistoryRouter,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import { Link } from "react-router-dom/dist";
 import { useState } from "react";
 import { PowerSettingsNew, Settings } from "@mui/icons-material";
 import PersonIcon from "@mui/icons-material/Person";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
-import _ from "lodash";
+import _, { forInRight } from "lodash";
 import ProfileModal from "../../dialog/ProfileModal";
+import { useDispatch, useSelector } from "react-redux";
+import { setUser } from "../../redux/slices/userSlice";
+import { useFormik } from "formik";
+import { enqueueSnackbar } from "notistack";
 
 const sideBarItems = [
   {
@@ -35,6 +44,8 @@ const Sidebar = () => {
   const isSelected = (path) => location.pathname === path;
   const [anchorEl, setAnchorEl] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -44,9 +55,20 @@ const Sidebar = () => {
     setAnchorEl(null);
   };
 
-  const handleProfileDialogOpen = () => {
-    
-    setOpenDialog();
+  const handleLogout = () => {
+    try {
+      console.log("vào");
+      localStorage.setItem("accessToken", null);
+      dispatch(setUser(null));
+      enqueueSnackbar(`Đăng xuất thành công`, {
+        variant: "success",
+        anchorOrigin: {
+          vertical: "bottom",
+          horizontal: "right",
+        },
+      });
+      navigate("/auth/login");
+    } catch (error) {}
   };
 
   const open = Boolean(anchorEl);
@@ -125,21 +147,22 @@ const Sidebar = () => {
               <PersonIcon />
             </ListItemIcon>
             <ListItemText primary="Thông tin tài khoản" />
-           
+
             {/* {openDialog ? : null} */}
           </ListItem>
-          <ListItem button style={{ margin: "0 6px 0 6px", color: "red" }}>
+          <ListItemButton
+            button
+            onClick={handleLogout}
+            style={{ margin: "0 6px 0 6px", color: "red" }}
+          >
             <ListItemIcon>
               <PowerSettingsNew color="error" />
             </ListItemIcon>
             <ListItemText primary="Đăng xuất" />
-          </ListItem>
+          </ListItemButton>
         </List>
       </Popover>
-      <ProfileModal
-            onClose={() => setOpenDialog(false)}
-             open={openDialog} /> 
-
+      <ProfileModal onClose={() => setOpenDialog(false)} open={openDialog} />
     </Box>
   );
 };

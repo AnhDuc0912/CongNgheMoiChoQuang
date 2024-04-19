@@ -16,7 +16,7 @@ const Room = () => {
   const { roomId } = useParams();
   const socket = socketManager('chatRoom');
   const [messageTimeout, setMessageTimeout] = useState(false);
-  let { user } = useSelector((state) => state.user);
+  const { user } = useSelector((state) => state.user);
   const [connected, setConnected] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showRoomInfo, setShowRoomInfo] = useState(false);
