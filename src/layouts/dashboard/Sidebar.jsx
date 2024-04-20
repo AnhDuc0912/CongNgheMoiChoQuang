@@ -21,12 +21,12 @@ import { useState } from "react";
 import { PowerSettingsNew, Settings } from "@mui/icons-material";
 import PersonIcon from "@mui/icons-material/Person";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
-import _, { forInRight } from "lodash";
 import ProfileModal from "../../dialog/ProfileModal";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { setUser } from "../../redux/slices/userSlice";
-import { useFormik } from "formik";
+import ChangeCircleOutlinedIcon from "@mui/icons-material/ChangeCircleOutlined";
 import { enqueueSnackbar } from "notistack";
+import ChangePasswordModal from "../../dialog/ChangePasswordModal";
 
 const sideBarItems = [
   {
@@ -147,9 +147,19 @@ const Sidebar = () => {
               <PersonIcon />
             </ListItemIcon>
             <ListItemText primary="Thông tin tài khoản" />
-
-            {/* {openDialog ? : null} */}
           </ListItem>
+
+          <ListItem
+            onClick={() => setOpenDialog(true)}
+            button
+            style={{ margin: "0 6px 0 6px" }}
+          >
+            <ListItemIcon>
+              <ChangeCircleOutlinedIcon />
+            </ListItemIcon>
+            <ListItemText primary="Đổi mật khẩu" />
+          </ListItem>
+
           <ListItemButton
             button
             onClick={handleLogout}
@@ -162,6 +172,11 @@ const Sidebar = () => {
           </ListItemButton>
         </List>
       </Popover>
+
+      <ChangePasswordModal
+        onClose={() => setOpenDialog(false)}
+        open={openDialog}
+      />
       <ProfileModal onClose={() => setOpenDialog(false)} open={openDialog} />
     </Box>
   );

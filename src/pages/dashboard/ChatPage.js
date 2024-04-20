@@ -37,6 +37,7 @@ const Chats = () => {
       direction="row"
       sx={{ height: '100%' }}>
       <MenuRoomChat
+        key={roomId}
         rooms={rooms} />
       <Divider
         orientation="vertical"

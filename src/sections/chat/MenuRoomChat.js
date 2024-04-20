@@ -119,8 +119,9 @@ const MenuRoomChat = ({ rooms }) => {
         height: '100%',
         width: '500px'
       }}>
-      {rooms.map((roomItem) =>
+      {rooms.map((roomItem, index) =>
         <RoomChatItem
+          key={index}
           {...roomItem}
           loggingUserId={user._id} />)}
     </Stack>

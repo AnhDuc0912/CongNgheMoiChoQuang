@@ -46,9 +46,8 @@ const LoginForm = () => {
                         }
                     });
 
-                    
                     localStorage.setItem("accessToken", token);
-                    navigate("/chat/");
+                    navigate("/chat");
                 })
                 .catch(err => {
                     if (!err.response) {

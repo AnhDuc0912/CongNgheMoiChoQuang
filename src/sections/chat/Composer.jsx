@@ -1,4 +1,4 @@
-import { Stack } from "@mui/material";
+import { Popover, Stack } from "@mui/material";
 import { TextareaAutosize as BaseTextareaAutosize } from "@mui/base/TextareaAutosize";
 import { styled } from "@mui/system";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
@@ -8,6 +8,7 @@ import TagFacesIcon from "@mui/icons-material/TagFaces";
 import SendIcon from "@mui/icons-material/Send";
 import { useRef, useState } from "react";
 import EmojiPicker from "emoji-picker-react";
+import { current } from "@reduxjs/toolkit";
 
 const Textarea = styled(BaseTextareaAutosize)(
   ({ theme }) => `
@@ -38,8 +39,20 @@ const Textarea = styled(BaseTextareaAutosize)(
 );
 const Composer = ({ onSubmitMsg }) => {
   const [content, setContent] = useState("");
-  const [popEmoji, setPopEmoji] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
   const ref = useRef();
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+    ref.current?.focus();
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? "simple-popover" : undefined;
 
   const onEnter = () => {
     if (content.length > 0) {
@@ -54,6 +67,10 @@ const Composer = ({ onSubmitMsg }) => {
       e.preventDefault();
       onEnter(content);
     }
+  };
+
+  const handleEmojiClick = (emojiObject, event) => {
+    setContent((prevInput) => prevInput + emojiObject.emoji);
   };
 
   return (
@@ -80,18 +97,27 @@ const Composer = ({ onSubmitMsg }) => {
         <IconButton aria-label="attach-file">
           <AttachFileIcon />
         </IconButton>
+
         <IconButton aria-label="photos">
           <CropOriginalIcon />
         </IconButton>
-        <IconButton
-          aria-label="emoji"
-          onClick={() => {
-            setPopEmoji(true);
-          }}
-        >
+
+        <IconButton aria-label="emoji" onClick={handleClick}>
           <TagFacesIcon />
         </IconButton>
-        <EmojiPicker open={popEmoji}/>
+        <Popover
+          style={{ boxShadow: "2px 6px 18px" }}
+          id={id}
+          open={open}
+          anchorEl={anchorEl}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "right",
+          }}
+        >
+          <EmojiPicker onEmojiClick={handleEmojiClick} open={open} />
+        </Popover>
         {content.length > 0 && (
           <IconButton onClick={onEnter} aria-label="emoji">
             <SendIcon sx={{ color: "#0162C4" }} />
