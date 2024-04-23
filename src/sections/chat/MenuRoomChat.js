@@ -172,7 +172,7 @@ const MenuRoomChat = ({ rooms }) => {
             {...roomItem}
             loggingUserId={user._id} />)
       }
-    </Stack >
+    </Stack>
   )
 }
 

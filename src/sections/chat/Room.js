@@ -1,4 +1,4 @@
-import { Box, Stack, Drawer, CircularProgress, LinearProgress, Alert } from "@mui/material";
+import { Box, Stack, Drawer, LinearProgress, Alert } from "@mui/material";
 import { useParams } from "react-router-dom";
 import { useState } from "react";
 import Composer from "./Composer";
@@ -9,14 +9,13 @@ import { useEffect } from "react";
 import { socketManager } from '../../socket';
 import { useSelector } from "react-redux";
 import RoomHeader from "./RoomHeader";
-import axios from "axios";
 
 
 const Room = () => {
   const { roomId } = useParams();
   const socket = socketManager('chatRoom');
   const [messageTimeout, setMessageTimeout] = useState(false);
-  let { user } = useSelector((state) => state.user);
+  const { user } = useSelector((state) => state.user);
   const [connected, setConnected] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showRoomInfo, setShowRoomInfo] = useState(false);
@@ -90,7 +89,7 @@ const Room = () => {
     console.log(msg);
   }
 
-  
+
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       setMessageTimeout(true);
@@ -141,13 +140,13 @@ const Room = () => {
       }}>
       <RoomHeader header={getRoomHeader()} />
       <Box>
-        {connected ? 
-          messageTimeout ?
-          <Alert sx={{ visibility: "hidden" }} severity="success">Kết nối thành công</Alert>
-          :
-          <Alert severity="success">Kết nối thành công</Alert>
-         : 
-          loading ? null : <Alert severity="warning">Mất kết nối</Alert>
+        {connected
+          ? (!messageTimeout &&
+            <Alert severity="success">
+              Kết nối thành công
+            </Alert>)
+          : (loading &&
+            <Alert severity="warning">Mất kết nối</Alert>)
         }
       </Box>
       {loading ? (
@@ -183,7 +182,6 @@ const Room = () => {
           })}
         </Stack>
       )}
-
       <Composer
         onSubmitMsg={onEnteredNewMsg}
       />

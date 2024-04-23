@@ -21,7 +21,6 @@ export default function App() {
           }
         })
         .then(res => {
-          console.log(res.data.user);
           dispatch(setUser(res.data.user));
         })
         .catch(err => {
