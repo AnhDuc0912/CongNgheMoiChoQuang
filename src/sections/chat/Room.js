@@ -145,8 +145,10 @@ const Room = () => {
             <Alert severity="success">
               Kết nối thành công
             </Alert>)
-          : (loading &&
-            <Alert severity="warning">Mất kết nối</Alert>)
+          : null
+        }
+        {loading &&
+          <Alert severity="warning">Mất kết nối</Alert>
         }
       </Box>
       {loading ? (
