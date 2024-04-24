@@ -114,9 +114,10 @@ const Composer = ({ onSubmitMsg }) => {
           anchorOrigin={{
             vertical: "top",
             horizontal: "right",
-          }}
-        >
-          <EmojiPicker onEmojiClick={handleEmojiClick} open={open} />
+          }}>
+          <EmojiPicker
+            onEmojiClick={handleEmojiClick}
+            open={open} />
         </Popover>
         {content.length > 0 && (
           <IconButton onClick={onEnter} aria-label="emoji">

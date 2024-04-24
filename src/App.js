@@ -34,7 +34,7 @@ export default function App() {
           });
 
         })
-        .finally(() => dispatch(stopLoading()))
+      //   .finally(() => dispatch(stopLoading()))
     }
   }, [dispatch]);
 

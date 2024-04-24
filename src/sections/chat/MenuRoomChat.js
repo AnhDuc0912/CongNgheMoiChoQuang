@@ -1,10 +1,12 @@
-import { Box, Typography, Stack } from "@mui/material";
+import { Box, Typography, Stack, IconButton } from "@mui/material";
 import Avatar from '@mui/material/Avatar';
 import Chip from '@mui/material/Chip';
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import { getGroupChatTitle } from "../../utils/getGroupChatTitle";
+import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
+import ReactSearchBox from "react-search-box";
 
 export const RoomChatItem = ({
   _id,
@@ -119,11 +121,57 @@ const MenuRoomChat = ({ rooms }) => {
         height: '100%',
         width: '500px'
       }}>
-      {rooms.map((roomItem, index) =>
-        <RoomChatItem
-          key={index}
-          {...roomItem}
-          loggingUserId={user._id} />)}
+      <Stack
+        direction="row"
+        sx={{ paddingX: '15px', paddingY: '10px' }}>
+        <Box sx={{ width: '100%' }}>
+          <Typography
+            fontWeight="1000"
+            fontSize="bold"
+            variant="h4">
+            {`Tin nhắn`}
+          </Typography>
+        </Box>
+        <IconButton size="medium">
+          <DriveFileRenameOutlineIcon />
+        </IconButton>
+      </Stack>
+      <Box sx={{ paddingX: '15px', mb: '15px' }}>
+        <ReactSearchBox
+          inputBorderColor="#0162C4"
+          placeholder="Tìm kiếm"
+          value="Doe"
+          data={[
+            {
+              key: "john",
+              value: "John Doe",
+            },
+            {
+              key: "jane",
+              value: "Jane Doe",
+            },
+            {
+              key: "mary",
+              value: "Mary Phillips",
+            },
+            {
+              key: "robert",
+              value: "Robert",
+            },
+            {
+              key: "karius",
+              value: "Karius",
+            },
+          ]}
+          callback={(record) => console.log(record)}
+        />
+      </Box>
+      {
+        rooms.map((roomItem) =>
+          <RoomChatItem
+            {...roomItem}
+            loggingUserId={user._id} />)
+      }
     </Stack>
   )
 }
