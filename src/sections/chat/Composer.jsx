@@ -37,9 +37,11 @@ const Textarea = styled(BaseTextareaAutosize)(
     }
   `
 );
-const Composer = ({ onSubmitMsg }) => {
+const Composer = ({ onSubmitMsg, onTyping, onStopTyping }) => {
+  const [timer, setTimer] = useState();
   const [content, setContent] = useState("");
   const [anchorEl, setAnchorEl] = useState(null);
+  const [typing, setTyping] = useState(false);
   const ref = useRef();
 
   const handleClick = (event) => {
@@ -61,6 +63,21 @@ const Composer = ({ onSubmitMsg }) => {
       ref.current?.focus();
     }
   };
+  const onTypingMessage = (e) => {
+    if (!typing) {
+      onTyping();
+    }
+    setTyping(true);
+    setContent(e.target.value);
+    clearTimeout(timer);
+
+    const newTimer = setTimeout(() => {
+      setTyping(false);
+      onStopTyping();
+    }, 1000);
+
+    setTimer(newTimer);
+  }
 
   const onKeyDown = (e) => {
     if (e.keyCode === 13 && !e.shiftKey) {
@@ -82,49 +99,48 @@ const Composer = ({ onSubmitMsg }) => {
         paddingY: "10px",
         paddingX: "15px",
         alignItems: "flex-end",
-      }}
-    >
+      }}>
       <Textarea
         ref={ref}
         autoFocus
         onKeyDown={onKeyDown}
         maxRows="5"
         value={content}
-        onChange={(e) => setContent(e.target.value)}
+        onChange={onTypingMessage}
         placeholder="Soạn tin nhắn"
       />
       <Stack direction="row">
         <IconButton aria-label="attach-file">
           <AttachFileIcon />
         </IconButton>
-
         <IconButton aria-label="photos">
           <CropOriginalIcon />
         </IconButton>
-
-        <IconButton aria-label="emoji" onClick={handleClick}>
+        <IconButton
+          aria-label="emoji"
+          onClick={handleClick}>
           <TagFacesIcon />
         </IconButton>
-        <Popover
-          style={{ boxShadow: "2px 6px 18px" }}
-          id={id}
-          open={open}
-          anchorEl={anchorEl}
-          onClose={handleClose}
-          anchorOrigin={{
-            vertical: "top",
-            horizontal: "right",
-          }}>
-          <EmojiPicker
-            onEmojiClick={handleEmojiClick}
-            open={open} />
-        </Popover>
         {content.length > 0 && (
           <IconButton onClick={onEnter} aria-label="emoji">
             <SendIcon sx={{ color: "#0162C4" }} />
           </IconButton>
         )}
       </Stack>
+      <Popover
+        style={{ boxShadow: "2px 6px 18px" }}
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}>
+        <EmojiPicker
+          onEmojiClick={handleEmojiClick}
+          open={open} />
+      </Popover>
     </Stack>
   );
 };

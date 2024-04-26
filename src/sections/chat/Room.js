@@ -9,6 +9,7 @@ import { useEffect } from "react";
 import { socketManager } from '../../socket';
 import { useSelector } from "react-redux";
 import RoomHeader from "./RoomHeader";
+import MemberTyping from "./MemberTyping";
 
 
 const Room = () => {
@@ -23,6 +24,7 @@ const Room = () => {
   const [room, setRoom] = useState();
   const [members, setMembers] = useState([]);
   const [messages, setMessages] = useState([]);
+  const [userTypingIds, setUserTypingIds] = useState([]);
 
   const getRoomHeader = () => {
     if (!room) {
@@ -44,7 +46,7 @@ const Room = () => {
     return {
       avatar: '',
       title: 'Chat nhóm title',
-      subtitle: "35 thành viên"
+      subtitle: `${room.members.length} thành viên`
     }
   }
 
@@ -54,7 +56,6 @@ const Room = () => {
 
   const onEnteredNewMsg = async (msg) => {
     if (messages.length >= 0) {
-      console.log(roomId);
       socket.emit('user.sendMsg', roomId, {
         type: 'text',
         content: msg
@@ -62,16 +63,21 @@ const Room = () => {
     }
   }
 
+  const typingMsg = (typing) => {
+    socket.emit('user.typing', roomId, {
+      type: typing,
+      isTyping: true
+    });
+  }
+
   const onConnected = () => {
     setConnected(true);
     setLoading(false);
-    console.log("onConnected");
   }
 
   const onDisconnected = () => {
     setLoading(false);
     setConnected(false);
-    console.log("onDisconnected");
   }
 
   const onJoined = (response) => {
@@ -84,11 +90,21 @@ const Room = () => {
     }
   }
 
-  const onReceiveIncommingMsg = async (roomId, msg) => {
+  const onReceiveIncomingMsg = async (roomId, msg) => {
     setMessages((pre) => [msg, ...pre]);
     console.log(msg);
   }
 
+  const onReceiveIncomingTyping = async (roomId, isTyping, typingUserId) => {
+    if (!isTyping) {
+      setUserTypingIds(userTypingIds.filter(ids => ids !== typingUserId))
+
+    } else {
+      let temp = userTypingIds.filter(ids => ids !== typingUserId)
+      temp.push(typingUserId);
+      setUserTypingIds(temp)
+    }
+  }
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -116,7 +132,8 @@ const Room = () => {
   useEffect(() => {
     socket.emit('join', roomId, onJoined);
 
-    socket.on('incomingMsg', onReceiveIncommingMsg);
+    socket.on('incomingMsg', onReceiveIncomingMsg);
+    socket.on('incomingTyping', onReceiveIncomingTyping);
     socket.io.on("error", (error) => {
       console.log(error)
       socket.connect();
@@ -136,55 +153,64 @@ const Room = () => {
       sx={{
         width: '100%',
         height: '100vh',
-        backgroundColor: 'whitesmoke'
+        backgroundColor: 'whitesmoke',
+        overflow: 'hidden'
       }}>
-      <RoomHeader header={getRoomHeader()} />
+      <RoomHeader
+        header={getRoomHeader()}
+        onToggleRoomDetail={() => { setShowRoomInfo(!showRoomInfo) }} />
       <Box>
-        {connected
+        {!loading && connected
           ? (!messageTimeout &&
             <Alert severity="success">
               Kết nối thành công
             </Alert>)
-          : null
+          : !loading &&
+          <Alert severity="error">
+            Mất kết nối
+          </Alert>
         }
         {loading &&
-          <Alert severity="warning">Mất kết nối</Alert>
+          <Box>
+            <Alert severity="info">Đang kết nối</Alert>
+            <LinearProgress color="info" />
+          </Box>
         }
       </Box>
-      {loading ? (
-        <>
-          <Alert severity="info">Đang kết nối</Alert>
-          <LinearProgress color="info" />
-        </>
-      ) : (
-        <Stack
-          sx={{
-            display: 'flex',
-            overflowX: 'none',
-            overflowY: 'auto',
-            flexDirection: 'column-reverse',
-            height: '100%',
-            width: '100%',
-          }}>
-          {_.map(messages, (message, index) => {
-            if (message.creatorId === user._id) {
-              return (
-                <RightMessage
-                  key={index}
-                  {...message}
-                />
-              )
-            }
+      <Stack
+        sx={{
+          display: 'flex',
+          overflowX: 'none',
+          overflowY: 'auto',
+          flexDirection: 'column-reverse',
+          height: '100%',
+          width: '100%',
+        }}>
+        {(members.length > 0 && userTypingIds.length > 0) &&
+          <MemberTyping
+            typingUserIds={userTypingIds}
+            members={members} />
+        }
+        {_.map(messages, (message, index) => {
+          if (message.creatorId === user._id) {
             return (
-              <LeftMessage
-                content={message.content}
-                user={members.find(x => x._id === message.creatorId)}
+              <RightMessage
+                key={index}
+                {...message}
               />
             )
-          })}
-        </Stack>
-      )}
+          }
+          return (
+            <LeftMessage
+              content={message.content}
+              user={members.find(x => x._id === message.creatorId)}
+            />
+          )
+        })}
+      </Stack>
       <Composer
+        onTyping={() => typingMsg(true)}
+        onStopTyping={() => typingMsg(false)}
         onSubmitMsg={onEnteredNewMsg}
       />
       <Drawer

@@ -1,4 +1,4 @@
-import { Typography, Stack, Avatar } from "@mui/material";
+import { Typography, Stack, Avatar, Box } from "@mui/material";
 import DoneIcon from '@mui/icons-material/Done';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
 
@@ -13,32 +13,38 @@ export const LeftMessage = ({ user, content }) => {
       <Avatar
         alt={user.fullName}
         src={user.avatar} />
-      <Stack
-        sx={{
-          padding: '10px',
-          borderRadius: '10px',
-          backgroundColor: 'white'
-        }}
-        direction="column">
-        <strong>{user.fullName}</strong>
+      <Box>
         <Typography
-          sx={{ maxWidth: '700px', minWidth: '100px' }}
-          color="black"
-          fontWeight="500"
-          fontSize="15px"
-          variant="body1">
-          {content}
+          sx={{ fontSize: '13px', mb: '5px' }}>
+          {user.fullName}
         </Typography>
-        <Typography
-          mt="5px"
-          color="black"
-          fontWeight="500"
-          fontSize="12px"
-          variant="body1">
-          {'20:54'}
-        </Typography>
-      </Stack>
+        <Stack
+          sx={{
+            padding: '10px',
+            borderRadius: '10px',
+            backgroundColor: 'white'
+          }}
+          direction="column">
+          <Typography
+            sx={{ maxWidth: '700px', minWidth: '100px' }}
+            color="black"
+            fontWeight="500"
+            fontSize="15px"
+            variant="body1">
+            {content}
+          </Typography>
+          <Typography
+            mt="5px"
+            color="black"
+            fontWeight="500"
+            fontSize="12px"
+            variant="body1">
+            {'20:54'}
+          </Typography>
+        </Stack>
+      </Box>
     </Stack>
+
   )
 }
 
