@@ -10,7 +10,7 @@ import { socketManager } from '../../socket';
 import { useSelector } from "react-redux";
 import RoomHeader from "./RoomHeader";
 import MemberTyping from "./MemberTyping";
-
+import { v4 as uuidv4 } from 'uuid';
 
 const Room = () => {
   const { roomId } = useParams();
@@ -36,11 +36,18 @@ const Room = () => {
     }
 
     if (room.singleRoom) {
-      const { avatar, fullName } = members.find(x => x._id !== user._id);
+      const {
+        avatar,
+        fullName,
+        email,
+        phoneNumber
+      } = members.find(x => x._id !== user._id);
       return {
         avatar: avatar,
         title: fullName,
-        subtitle: "Đang online"
+        subtitle: "Đang online",
+        email,
+        phoneNumber
       }
     }
     return {
@@ -50,16 +57,23 @@ const Room = () => {
     }
   }
 
-  const onSentMsg = ({ sentMsg }) => {
-    console.log(sentMsg);
-  }
 
   const onEnteredNewMsg = async (msg) => {
     if (messages.length >= 0) {
-      socket.emit('user.sendMsg', roomId, {
+
+      const newMsg = {
+        uuid: uuidv4(),
+        seen: false,
+        sent: false,
+        content: msg,
         type: 'text',
-        content: msg
-      }, onSentMsg);
+        creatorId: user._id,
+        roomId: roomId
+      }
+
+      socket.emit('user.sendMsg', roomId, newMsg, ({ message }) => {
+
+      });
     }
   }
 
@@ -92,7 +106,6 @@ const Room = () => {
 
   const onReceiveIncomingMsg = async (roomId, msg) => {
     setMessages((pre) => [msg, ...pre]);
-    console.log(msg);
   }
 
   const onReceiveIncomingTyping = async (roomId, isTyping, typingUserId) => {
@@ -142,6 +155,7 @@ const Room = () => {
     return () => {
       socket.off('join');
       socket.off('incomingMsg');
+      socket.off('incomingTyping');
       socket.emit('leave', roomId);
       socket.off('stopTyping', () => { });
       socket.off('typing', () => { });
@@ -191,17 +205,20 @@ const Room = () => {
             typingUserIds={userTypingIds}
             members={members} />
         }
-        {_.map(messages, (message, index) => {
+
+        {/* Msg from socket */}
+        {_.map(messages, (message, idx) => {
           if (message.creatorId === user._id) {
             return (
               <RightMessage
-                key={index}
+                key={idx}
                 {...message}
               />
             )
           }
           return (
             <LeftMessage
+              key={idx}
               content={message.content}
               user={members.find(x => x._id === message.creatorId)}
             />
@@ -217,7 +234,9 @@ const Room = () => {
         anchor="right"
         open={showRoomInfo}
         onClose={() => setShowRoomInfo(false)}>
-        <RoomDetail user={user} />
+        <RoomDetail
+          room={room}
+          info={getRoomHeader()} />
       </Drawer>
     </Stack>
   )

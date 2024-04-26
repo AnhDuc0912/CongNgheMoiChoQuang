@@ -1,12 +1,12 @@
 import { Box, Typography, Stack, IconButton } from "@mui/material";
 import Avatar from '@mui/material/Avatar';
-import Chip from '@mui/material/Chip';
-import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import { getGroupChatTitle } from "../../utils/getGroupChatTitle";
 import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
 import ReactSearchBox from "react-search-box";
+import { useState } from "react";
+import CreateGroupChatDialog from "./CreateGroupChatDialog";
 
 export const RoomChatItem = ({
   _id,
@@ -113,6 +113,7 @@ export const RoomChatItem = ({
 
 const MenuRoomChat = ({ rooms }) => {
   const { user } = useSelector((state) => state.user);
+  const [openCreateGroupChat, setOpenCreateGroupChat] = useState(false);
   return (
     <Stack
       sx={{
@@ -132,7 +133,9 @@ const MenuRoomChat = ({ rooms }) => {
             {`Tin nhắn`}
           </Typography>
         </Box>
-        <IconButton size="medium">
+        <IconButton
+          size="medium"
+          onClick={() => setOpenCreateGroupChat(true)}>
           <DriveFileRenameOutlineIcon />
         </IconButton>
       </Stack>
@@ -142,26 +145,6 @@ const MenuRoomChat = ({ rooms }) => {
           placeholder="Tìm kiếm"
           value="Doe"
           data={[
-            {
-              key: "john",
-              value: "John Doe",
-            },
-            {
-              key: "jane",
-              value: "Jane Doe",
-            },
-            {
-              key: "mary",
-              value: "Mary Phillips",
-            },
-            {
-              key: "robert",
-              value: "Robert",
-            },
-            {
-              key: "karius",
-              value: "Karius",
-            },
           ]}
           callback={(record) => console.log(record)}
         />
@@ -172,6 +155,9 @@ const MenuRoomChat = ({ rooms }) => {
             {...roomItem}
             loggingUserId={user._id} />)
       }
+      <CreateGroupChatDialog
+        open={openCreateGroupChat}
+        onClose={() => setOpenCreateGroupChat(false)} />
     </Stack>
   )
 }

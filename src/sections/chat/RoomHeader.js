@@ -35,7 +35,7 @@ const RoomHeader = ({ header, onToggleRoomDetail }) => {
         </Stack>
       </Box>
       <IconButton
-        // onClick={() => setShowRoomInfo(!showRoomInfo)}
+        onClick={onToggleRoomDetail}
         aria-label="emoji">
         <SubjectIcon />
       </IconButton>

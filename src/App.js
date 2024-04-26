@@ -15,7 +15,7 @@ export default function App() {
     if (token) {
       dispatch(setLoading());
       axios
-        .get(process.env.REACT_APP_API_ENDPOINT + "/user", {
+        .get(process.env.REACT_APP_API_ENDPOINT + "user", {
           headers: {
             Authorization: 'Bearer ' + token,
           }

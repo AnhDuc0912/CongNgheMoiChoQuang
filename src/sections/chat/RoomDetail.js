@@ -1,4 +1,4 @@
-import { Box, Typography, Stack, Avatar } from "@mui/material";
+import { Box, Typography, Stack, Avatar, Divider, Button } from "@mui/material";
 import IconButton from '@mui/material/IconButton';
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
 import { useState } from "react";
@@ -6,17 +6,11 @@ import NotificationsOffOutlinedIcon from '@mui/icons-material/NotificationsOffOu
 import PushPinOutlinedIcon from '@mui/icons-material/PushPinOutlined';
 
 const RoomDetail = ({
-  user,
-
+  info,
+  room
 }) => {
-  
-  const [muted, setMuted] = useState(false);
-  const [pinned, setPinned] = useState(false);
-
-
-
   return (
-    <Box sx={{ width: '400px', height: '100%' }}>
+    <Box sx={{ width: '350px', height: '100%' }}>
       <Box
         py="30px"
         sx={{
@@ -28,69 +22,68 @@ const RoomDetail = ({
         }}>
         <Avatar
           sx={{
-            width: '100px',
-            height: '100px'
+            width: '120px',
+            height: '120px'
           }}
-          alt={user.fullName}
-          src={user.avatar} />
-        <Typography
-          mt="20px"
-          fontSize="20px"
-          fontWeight="800">
-          {user.fullName}
-        </Typography>
-        <Stack
-          justifyContent="center"
-          spacing="20px"
-          mt="30px"
-          px="30px"
-          direction="row"
-          sx={{ width: '100%' }}>
-          <Box
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            justifyContent="center">
-            <IconButton
-              onClick={() => setMuted(!muted)}
-              sx={{ background: "rgba(0, 0, 0, 0.1)" }}
-              size="large"
-              aria-label="emoji">
-              {muted
-                ? <NotificationsOffOutlinedIcon />
-                : <NotificationsNoneOutlinedIcon />
-              }
-            </IconButton>
-            <Typography fontSize="14px">
-              {muted
-                ? 'Bật thông báo'
-                : 'Tắt thông báo'
-              }
+          alt={info.title}
+          src={info.avatar} />
+        {room.singleRoom
+          ? <Box
+            sx={{
+              width: '100%',
+              justifyContent: "center",
+              alignItems: "center",
+              display: 'flex',
+              flexDirection: 'column'
+            }}>
+            <Typography
+              mt="20px"
+              fontSize="18px"
+              fontWeight="800">
+              {info.title}
+            </Typography>
+            <Typography
+              mt="20px"
+              fontSize="16px"
+              fontWeight="500">
+              {info.email}
+            </Typography>
+            <Typography
+              mt={'5px'}
+              fontSize="16px"
+              fontWeight="500">
+              {info.phoneNumber}
             </Typography>
           </Box>
-          <Box
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            justifyContent="center">
-            <IconButton
-              onClick={() => setPinned(!pinned)}
-              sx={{ background: "rgba(0, 0, 0, 0.1)" }}
-              size="large"
-              aria-label="emoji">
-              {pinned
-                ? <PushPinOutlinedIcon />
-                : <PushPinOutlinedIcon />
-              }
-            </IconButton>
-            <Typography fontSize="14px">
-              {pinned
-                ? 'Bỏ ghim hội thoại'
-                : 'Ghim hội thoại'
-              }
+          : <Box
+            sx={{
+              width: '100%',
+              justifyContent: "center",
+              alignItems: "center",
+              display: 'flex',
+              flexDirection: 'column'
+            }}>
+            <Typography
+              mt="20px"
+              fontSize="18px"
+              fontWeight="800">
+              {info.title}
+            </Typography>
+            <Typography
+              mt="10px"
+              fontSize="16px"
+              fontWeight="500">
+              {info.subtitle}
             </Typography>
           </Box>
-        </Stack>
+        }
+        {room.singleRoom &&
+          <Button
+            sx={{ marginTop: '20px' }}
+            variant="contained">
+            Xem trang cá nhân
+          </Button>
+        }
       </Box>
     </Box>
   )
