@@ -34,7 +34,7 @@ const LoginForm = () => {
         .required('Vui lòng nhập mật khẩu')
     }),
     onSubmit: async values => {
-      axios.post("http://localhost:4000/api/auth/login", values)
+      axios.post(process.env.REACT_APP_API_ENDPOINT + "/api/auth/login", values)
         .then((res) => {
           const { token } = res.data;
 

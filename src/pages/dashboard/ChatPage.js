@@ -19,7 +19,7 @@ const Chats = () => {
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
     axios
-      .get("http://localhost:4000/api/room/last", {
+      .get(process.env.REACT_APP_API_ENDPOINT + "/room/last", {
         headers: {
           Authorization: 'Bearer ' + token,
         }
