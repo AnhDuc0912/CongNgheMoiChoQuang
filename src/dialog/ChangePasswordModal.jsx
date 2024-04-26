@@ -46,6 +46,77 @@ function ChangePasswordModal({ open, onClose }) {
   const [showNewPassword, setNewShowPassword] = useState(false);
   const [showNewPasswordConfirm, setNewShowPasswordConfirm] = useState(false);
 
+  const formik = useFormik({
+    enableReinitialize: true,
+    initialValues: {
+      password: "",
+      newPassword: "",
+      confirmPassword: "",
+    },
+    validationSchema: Yup.object({
+      password: Yup.string().required("Vui lòng nhập mật khẩu hiện tại"),
+      newPassword: Yup.string()
+        .required("Vui lòng nhập mật khẩu mới")
+        .matches(
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+          "Mật khẩu mới phải chứa ít nhất 8 ký tự, bao gồm ít nhất một chữ hoa, một chữ thường, một số và một ký tự đặc biệt"
+        ),
+      confirmPassword: Yup.string()
+        .oneOf(
+          [Yup.ref("newPassword"), null],
+          "Xác nhận mật khẩu mới không khớp"
+        )
+        .required("Vui lòng xác nhận mật khẩu mới"),
+    }),
+    onSubmit: async (values) => {
+      const token = localStorage.getItem("accessToken");
+      try {
+        const { password, newPassword } = values; 
+        const payload = { password, newPassword };
+        await axios.post(
+          process.env.REACT_APP_API_ENDPOINT + "user/change-password",
+          payload,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        console.log("vào");
+
+        enqueueSnackbar(`Đổi mật khẩu thành công`, {
+          variant: "success",
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "right",
+          },
+        });
+
+        onClose(false);
+      } catch (error) {
+        if (!error.response) {
+          enqueueSnackbar(`Không thể đổi mật khẩu`, {
+            variant: "error",
+            anchorOrigin: {
+              vertical: "bottom",
+              horizontal: "right",
+            },
+          });
+          return;
+        }
+        const { error: errorMsg } = error.response.data;
+        if (errorMsg === 'Old password is incorrect.') {
+          enqueueSnackbar('Mật khẩu hiện tại không đúng', { 
+            variant: 'error',
+            anchorOrigin: {
+              vertical: 'bottom',
+              horizontal: 'right'
+            }
+          });
+        }
+      }
+    },
+  });
 
   return (
     <>
@@ -61,7 +132,7 @@ function ChangePasswordModal({ open, onClose }) {
         className={classes.modal}
         //   onMouseDown={handleModalClick}
       >
-        <form>
+        <form onSubmit={formik.handleSubmit}>
           <Stack
             alignItems="center"
             spacing={"20px"}
@@ -79,11 +150,11 @@ function ChangePasswordModal({ open, onClose }) {
               fullWidth
               id="password"
               label="Mật khẩu hiện tại"
-              // onChange={formik.handleChange}
-              // onBlur={formik.handleBlur}
-              // error={formik.errors.password && formik.touched.password}
-              // helperText={formik.errors.password}
-              // value={formik.values.password}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.errors.password && formik.touched.password}
+              helperText={formik.errors.password}
+              value={formik.values.password}
               type={showPassword ? "text" : "password"}
               InputProps={{
                 endAdornment: (
@@ -103,11 +174,11 @@ function ChangePasswordModal({ open, onClose }) {
               fullWidth
               id="newPassword"
               label="Mật khẩu mới"
-              // onChange={formik.handleChange}
-              // onBlur={formik.handleBlur}
-              // error={formik.errors.password && formik.touched.password}
-              // helperText={formik.errors.password}
-              // value={formik.values.password}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.errors.newPassword && formik.touched.newPassword}
+              helperText={formik.errors.newPassword}
+              value={formik.values.newPassword}
               type={showNewPassword ? "text" : "password"}
               InputProps={{
                 endAdornment: (
@@ -125,13 +196,15 @@ function ChangePasswordModal({ open, onClose }) {
             />
             <TextField
               fullWidth
-              id="newPassword"
-              label="Mật khẩu mới"
-              // onChange={formik.handleChange}
-              // onBlur={formik.handleBlur}
-              // error={formik.errors.password && formik.touched.password}
-              // helperText={formik.errors.password}
-              // value={formik.values.password}
+              id="confirmPassword"
+              label="Nhập lại mật khẩu"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={
+                formik.errors.confirmPassword && formik.touched.confirmPassword
+              }
+              helperText={formik.errors.confirmPassword}
+              value={formik.values.confirmPassword}
               type={showNewPasswordConfirm ? "text" : "password"}
               InputProps={{
                 endAdornment: (
@@ -141,7 +214,11 @@ function ChangePasswordModal({ open, onClose }) {
                         setNewShowPasswordConfirm(!showNewPasswordConfirm);
                       }}
                     >
-                      {showNewPasswordConfirm ? <Visibility /> : <VisibilityOff />}
+                      {showNewPasswordConfirm ? (
+                        <Visibility />
+                      ) : (
+                        <VisibilityOff />
+                      )}
                     </IconButton>
                   </InputAdornment>
                 ),
