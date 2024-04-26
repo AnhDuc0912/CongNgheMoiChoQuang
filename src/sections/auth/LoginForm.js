@@ -34,67 +34,66 @@ const LoginForm = () => {
         .required('Vui lòng nhập mật khẩu')
     }),
     onSubmit: async values => {
-      axios.post(process.env.REACT_APP_API_ENDPOINT + "/api/auth/login", values)
-        .then((res) => {
-          const { token } = res.data;
+      try {
+        const res = await axios.post(process.env.REACT_APP_API_ENDPOINT + "auth/login", values);
+        const { token } = res.data;
 
-          enqueueSnackbar(`Đăng nhập thành công`, {
-            variant: 'success',
+        enqueueSnackbar('Đăng nhập thành công', { 
+          variant: 'success',
+          anchorOrigin: {
+            vertical: 'bottom',
+            horizontal: 'right'
+          }
+        });
+
+        localStorage.setItem("accessToken", token);
+        navigate("/chat");
+      } catch (error) {
+        if (!error.response) {
+          enqueueSnackbar('Không thể kết nối đến máy chủ', { 
+            variant: 'error',
             anchorOrigin: {
               vertical: 'bottom',
               horizontal: 'right'
             }
           });
-
-          localStorage.setItem("accessToken", token);
-          navigate("/chat");
-        })
-        .catch(err => {
-          if (!err.response) {
-            enqueueSnackbar(`Không thể kết nối đến máy chủ`, {
-              variant: 'error',
-              anchorOrigin: {
-                vertical: 'bottom',
-                horizontal: 'right'
-              }
-            });
-            return;
-          }
-          const { error } = err.response.data;
-          if (error === 'Password is incorrect.') {
-            enqueueSnackbar(`Sai mật khẩu`, {
-              variant: 'error',
-              anchorOrigin: {
-                vertical: 'bottom',
-                horizontal: 'right'
-              }
-            });
-          } else if (error === 'User not found.') {
-            enqueueSnackbar(`User không tồn tại trên hệ thống`, {
-              variant: 'error',
-              anchorOrigin: {
-                vertical: 'bottom',
-                horizontal: 'right'
-              }
-            });
-          } else if (error === 'Account has not been verified.') {
-            enqueueSnackbar(`Tài khoản chưa được xác thực qua email`, {
-              variant: 'error',
-              anchorOrigin: {
-                vertical: 'bottom',
-                horizontal: 'right'
-              }
-            });
-          } else {
-            enqueueSnackbar(error, {
-              variant: 'error',
-              anchorOrigin: {
-                vertical: 'bottom',
-                horizontal: 'right'
-              }
-            });
-          }
-        });
+          return;
+        }
+        const { error: errorMsg } = error.response.data;
+        if (errorMsg === 'Password is incorrect.') {
+          enqueueSnackbar('Sai mật khẩu', { 
+            variant: 'error',
+            anchorOrigin: {
+              vertical: 'bottom',
+              horizontal: 'right'
+            }
+          });
+        } else if (errorMsg === 'User not found.') {
+          enqueueSnackbar('User không tồn tại trên hệ thống', { 
+            variant: 'error',
+            anchorOrigin: {
+              vertical: 'bottom',
+              horizontal: 'right'
+            }
+          });
+        } else if (errorMsg === 'Account has not been verified.') {
+          enqueueSnackbar('Tài khoản chưa được xác thực qua email', { 
+            variant: 'error',
+            anchorOrigin: {
+              vertical: 'bottom',
+              horizontal: 'right'
+            }
+          });
+        } else {
+          enqueueSnackbar(errorMsg, { 
+            variant: 'error',
+            anchorOrigin: {
+              vertical: 'bottom',
+              horizontal: 'right'
+            }
+          });
+        }
+      }
     },
   });
 
