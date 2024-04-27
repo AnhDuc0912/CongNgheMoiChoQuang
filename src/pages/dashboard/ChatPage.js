@@ -1,35 +1,67 @@
-import { Box, Typography, Stack, Divider } from "@mui/material";
+import { Stack, Divider } from "@mui/material";
 import React, { useState } from "react";
 import MenuRoomChat from "../../sections/chat/MenuRoomChat";
 import Room from "../../sections/chat/Room";
 import { useEffect } from "react";
-import { Link as RouterLink, useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import StartNewChat from "../../sections/chat/StartNewChat";
-import { io } from "socket.io-client";
-import connectSocket from "../../utils/socket/connectSocket" ;
-import axios from "axios";
-
+import { socketManager } from '../../socket';
+import { useSelector } from "react-redux";
+import _ from "lodash";
 
 const Chats = () => {
-  const navigate = useNavigate();
-  const [rooms, setRooms] = useState([]);
+  const socket = socketManager('rooms');
+
+  const { user } = useSelector((state) => state.user);
   const { roomId } = useParams();
+
+  const [rooms, setRooms] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [connected, setConnected] = useState(false);
+
+
+  const onSubscribe = (response) => {
+    if (response) {
+      setRooms(response.rooms);
+    }
+  }
+
+  const onReceiveIncomingMsg = (roomId, room) => {
+    console.log("onReceiveIncomingMsg");
+    setRooms((preState) => [room, ...(preState.filter(x => x._id !== roomId))]);
+  }
+
+  const onConnected = () => {
+    setConnected(true);
+    setLoading(false);
+  }
+
+  const onDisconnected = () => {
+    setLoading(false);
+    setConnected(false);
+  }
+
+  useEffect(() => {
+    socket.emit('subscribe', user._id, onSubscribe);
+    socket.on('rooms.incomingMsg', onReceiveIncomingMsg);
+
+    return () => {
+      socket.off('subscribe');
+      socket.off('rooms.incomingMsg');
+      socket.emit('leave', user._id);
+    }
+  }, [connected, loading])
 
 
   useEffect(() => {
-    const token = localStorage.getItem("accessToken");
-    axios
-      .get(process.env.REACT_APP_API_ENDPOINT + "room/last", {
-        headers: {
-          Authorization: 'Bearer ' + token,
-        }
-      })
-      .then((res) => {
-        setRooms(res.data.rooms)
-      })
-      .catch((err) => {
-        console.log(err);
-      })
+    setLoading(true);
+    socket.on('connect', onConnected);
+    socket.on('disconnect', onDisconnected);
+
+    return () => {
+      socket.off('connect', onConnected);
+      socket.off('disconnect', onDisconnected);
+    }
   }, [])
 
   return (

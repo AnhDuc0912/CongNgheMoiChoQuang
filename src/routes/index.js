@@ -36,10 +36,16 @@ export default function Router() {
       element: <DashboardLayout />,
       children: [
         { element: <Navigate to={DEFAULT_PATH} replace />, index: true },
-        { path: "/chat/", element: <ChatPage /> },
-        { path: "/chat/:roomId", element: <ChatPage /> },
+        {
+          path: "/chat/",
+          element: <ChatPage />,
+        },
+        {
+          path: "/chat/:roomId",
+          element: <ChatPage />
+        },
         { path: "/user", element: <UserPage /> },
-        { path: "/user/:userId", element: <ProfilePage/>},
+        { path: "/user/:userId", element: <ProfilePage /> },
         { path: "404", element: <Page404 /> },
         { path: "*", element: <Navigate to="/404" replace /> },
       ],

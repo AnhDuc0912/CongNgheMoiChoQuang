@@ -11,6 +11,7 @@ export default function App() {
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
   useEffect(() => {
+    console.log("App.js ");
     const token = localStorage.getItem("accessToken");
     if (token) {
       dispatch(setLoading());
@@ -34,7 +35,9 @@ export default function App() {
           });
 
         })
-      //   .finally(() => dispatch(stopLoading()))
+        .finally(() => dispatch(stopLoading()))
+    } else {
+
     }
   }, [dispatch]);
 

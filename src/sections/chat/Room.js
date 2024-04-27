@@ -98,7 +98,7 @@ const Room = () => {
     if (response) {
       setConnected(true);
       setLoading(false);
-      setMembers(response.members)
+      setMembers(response.room.users)
       setRoom(response.room);
       setMessages(response.messages)
     }
@@ -143,6 +143,7 @@ const Room = () => {
   }, []);
 
   useEffect(() => {
+
     socket.emit('join', roomId, onJoined);
 
     socket.on('incomingMsg', onReceiveIncomingMsg);
@@ -157,8 +158,6 @@ const Room = () => {
       socket.off('incomingMsg');
       socket.off('incomingTyping');
       socket.emit('leave', roomId);
-      socket.off('stopTyping', () => { });
-      socket.off('typing', () => { });
     };
   }, [roomId]);
 

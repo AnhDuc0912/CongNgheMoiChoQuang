@@ -12,11 +12,11 @@ import {
 } from "@mui/material";
 import { ChatCircleDots, Users } from "phosphor-react";
 import {
-  unstable_HistoryRouter,
+  Link,
   useLocation,
   useNavigate,
+  unstable_viewTransition
 } from "react-router-dom";
-import { Link } from "react-router-dom/dist";
 import { useState } from "react";
 import { PowerSettingsNew, Settings } from "@mui/icons-material";
 import PersonIcon from "@mui/icons-material/Person";
@@ -69,7 +69,7 @@ const Sidebar = () => {
         },
       });
       navigate("/auth/login");
-    } catch (error) {}
+    } catch (error) { }
   };
 
   const open = Boolean(anchorEl);
@@ -100,7 +100,9 @@ const Sidebar = () => {
             key={sideBarItem.path}
           >
             <IconButton
+
               LinkComponent={Link}
+              unstable_viewTransition
               to={sideBarItem.path}
               sx={{
                 width: "max-content",

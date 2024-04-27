@@ -14,7 +14,6 @@ const slice = createSlice({
             state.isLoading = true;
         },
         setUser: (state, action) => {
-            state.isLoading = false;
             state.user = action.payload;
         },
         stopLoading: (state) => {
