@@ -4,7 +4,7 @@ import { useState } from "react";
 import Composer from "./Composer";
 import RoomDetail from "./RoomDetail";
 import _ from "lodash";
-import { LeftMessage, RightMessage } from "./MessageItem";
+import { LeftMessage, NotificationMessage, RightMessage } from "./MessageItem";
 import { useEffect } from "react";
 import { socketManager } from '../../socket';
 import { useSelector } from "react-redux";
@@ -207,21 +207,29 @@ const Room = () => {
 
         {/* Msg from socket */}
         {_.map(messages, (message, idx) => {
-          if (message.creatorId === user._id) {
+          if (message.type === 'system-notification') {
+            return <NotificationMessage
+              key={idx}
+              user={members.find(x => x._id === message.creatorId)}
+              {...message}
+            />
+          } else {
+            if (message.creatorId === user._id) {
+              return (
+                <RightMessage
+                  key={idx}
+                  {...message}
+                />
+              )
+            }
             return (
-              <RightMessage
+              <LeftMessage
                 key={idx}
-                {...message}
+                content={message.content}
+                user={members.find(x => x._id === message.creatorId)}
               />
             )
           }
-          return (
-            <LeftMessage
-              key={idx}
-              content={message.content}
-              user={members.find(x => x._id === message.creatorId)}
-            />
-          )
         })}
       </Stack>
       <Composer

@@ -10,13 +10,13 @@ import axios from "axios";
 export default function App() {
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
+  
   useEffect(() => {
-    console.log("App.js ");
     const token = localStorage.getItem("accessToken");
     if (token) {
       dispatch(setLoading());
       axios
-        .get(process.env.REACT_APP_API_ENDPOINT + "user", {
+        .get(process.env.REACT_APP_API_ENDPOINT + "user/me", {
           headers: {
             Authorization: 'Bearer ' + token,
           }

@@ -8,7 +8,7 @@ import RoomChatItem from "./RoomChatItem";
 import { useState } from "react";
 
 
-const MenuRoomChat = ({ rooms }) => {
+const MenuRoomChat = ({ rooms, onCreateGroupChat }) => {
   const { user } = useSelector((state) => state.user);
   const [openCreateGroupChat, setOpenCreateGroupChat] = useState(false);
 
@@ -55,7 +55,8 @@ const MenuRoomChat = ({ rooms }) => {
       )}
       <CreateGroupChatDialog
         open={openCreateGroupChat}
-        onClose={() => setOpenCreateGroupChat(false)} />
+        onClose={() => setOpenCreateGroupChat(false)}
+        onCreateGroupChat={onCreateGroupChat} />
     </Stack>
   )
 }
