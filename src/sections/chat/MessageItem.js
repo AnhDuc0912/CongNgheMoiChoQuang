@@ -1,6 +1,43 @@
-import { Typography, Stack, Avatar, Box } from "@mui/material";
+import { Typography, Stack, Avatar, Box, Chip } from "@mui/material";
 import DoneIcon from '@mui/icons-material/Done';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
+
+
+export const NotificationMessage = ({ user, content }) => {
+  const filterMsgSystem = () => {
+    if (content === 'created this room.') {
+      return " đã tạo phòng."
+    }
+  }
+
+  return (
+    <Stack
+      px="15px"
+      py="10px"
+      justifyContent="center"
+      spacing="15px"
+      bgcolor="whitesmoke"
+      direction="row">
+      <Chip
+        sx={{
+          fontSize: '12px',
+          justifyContent: 'flex-start',
+          color: 'rgb(1,98,196)',
+          fontWeight: '600',
+        }}
+        avatar={<Avatar src={user.avatar} />}
+        label={
+          <Typography
+            fontSize="14px"
+            fontWeight="600">
+            {user.fullName}
+            <span style={{ fontWeight: '400' }}>{filterMsgSystem()}</span>
+          </Typography>
+        }>
+      </Chip>
+    </Stack>
+  )
+}
 
 export const LeftMessage = ({ user, content }) => {
   return (
@@ -44,7 +81,6 @@ export const LeftMessage = ({ user, content }) => {
         </Stack>
       </Box>
     </Stack>
-
   )
 }
 

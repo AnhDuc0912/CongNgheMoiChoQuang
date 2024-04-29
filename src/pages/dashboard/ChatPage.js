@@ -23,6 +23,7 @@ const Chats = () => {
   const onSubscribe = (response) => {
     if (response) {
       setRooms(response.rooms);
+      console.log(response.rooms);
     }
   }
 
@@ -39,6 +40,12 @@ const Chats = () => {
   const onDisconnected = () => {
     setLoading(false);
     setConnected(false);
+  }
+
+  const createGroupChat = (data) => {
+    socket.emit('initRoomChat', data, ({ room }) => {
+      setRooms((preState) => [room, ...preState]);
+    });
   }
 
   useEffect(() => {
@@ -70,7 +77,8 @@ const Chats = () => {
       sx={{ height: '100%' }}>
       <MenuRoomChat
         key={roomId}
-        rooms={rooms} />
+        rooms={rooms}
+        onCreateGroupChat={createGroupChat} />
       <Divider
         orientation="vertical"
         flexItem />

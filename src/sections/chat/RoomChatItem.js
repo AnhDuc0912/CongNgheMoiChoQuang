@@ -11,7 +11,8 @@ const RoomChatItem = ({
   createdAt,
   updatedAt,
   lastMsg,
-  loggingUserId
+  loggingUserId,
+  title
 }) => {
   const param = useParams();
   const getDestinationInRoom = () => {
@@ -27,7 +28,7 @@ const RoomChatItem = ({
 
     return {
       avatar: '',
-      title: getGroupChatTitle(users, loggingUserId),
+      title: title || getGroupChatTitle(users, loggingUserId),
       content: lastMsg?.content || '',
     }
   }
