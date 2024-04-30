@@ -19,6 +19,7 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { useState } from "react";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import ReplayIcon from "@mui/icons-material/Replay";
+import { enqueueSnackbar } from "notistack";
 
 export const NotificationMessage = ({ user, content, newMember }) => {
   console.log(newMember);
@@ -135,6 +136,25 @@ export const RightMessage = ({ content, seen = false, sent = true }) => {
     setAnchorEl(null);
   };
 
+  const copyToClipboard = (text) => {
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        enqueueSnackbar(`Sao chép vào clipboard thành công`, {
+          variant: "success",
+          anchorOrigin: {
+            vertical: "bottom",
+            horizontal: "right",
+          },
+        });
+
+        handleClose();
+      })
+      .catch((error) => {
+        console.error("Lỗi khi sao chép tin nhắn vào clipboard: ", error);
+      });
+  };
+
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
   return (
@@ -168,7 +188,7 @@ export const RightMessage = ({ content, seen = false, sent = true }) => {
         }}
       >
         <List>
-          <ListItemButton>
+          <ListItemButton onClick={() => {copyToClipboard(content)}}>
             <ListItemIcon>
               <ContentCopyIcon />
             </ListItemIcon>
@@ -177,9 +197,9 @@ export const RightMessage = ({ content, seen = false, sent = true }) => {
           <Divider />
           <ListItemButton>
             <ListItemIcon>
-              <ReplayIcon color="error"/>
+              <ReplayIcon color="error" />
             </ListItemIcon>
-            <ListItemText primary="Thu hồi tin nhắn" sx={{ color: "red" }}/>
+            <ListItemText primary="Thu hồi tin nhắn" sx={{ color: "red" }} />
           </ListItemButton>
         </List>
       </Popover>
