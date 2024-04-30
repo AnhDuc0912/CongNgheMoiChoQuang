@@ -16,6 +16,7 @@ const RoomChatItem = ({
 
   const param = useParams();
   const { user } = useSelector((state) => state.user);
+  
   const fitlerLastMsgContent = () => {
     if (lastMsg.type === 'text') {
       return (

@@ -1,16 +1,23 @@
-import { Box, Typography, Stack, Avatar, Divider, Button } from "@mui/material";
-import IconButton from '@mui/material/IconButton';
-import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
-import { useState } from "react";
-import NotificationsOffOutlinedIcon from '@mui/icons-material/NotificationsOffOutlined';
-import PushPinOutlinedIcon from '@mui/icons-material/PushPinOutlined';
+import { Box, Typography, Avatar, Button } from "@mui/material";
+import { filterRoomInfo } from "../../utils/filterRoomInfo";
 
 const RoomDetail = ({
-  info,
-  room
+  room,
+  members,
+  loggingUserId,
+  onDispersedRoom
 }) => {
+  const info = filterRoomInfo(loggingUserId, room, members);
+
+
   return (
-    <Box sx={{ width: '350px', height: '100%' }}>
+    <Box
+      sx={{
+        width: '350px',
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100%'
+      }}>
       <Box
         py="30px"
         sx={{
@@ -79,12 +86,29 @@ const RoomDetail = ({
         }
         {room.singleRoom &&
           <Button
-            sx={{ marginTop: '20px' }}
-            variant="contained">
+            variant="outlined">
             Xem trang cá nhân
           </Button>
         }
+
       </Box>
+      <Box
+        sx={{
+          display: 'flex',
+          flex: 1,
+          flexGrow: 1,
+        }}>
+        á
+      </Box>
+      <Button
+        onClick={() => {
+          onDispersedRoom(room._id);
+        }}
+        color="error"
+        sx={{ marginX: '15px', marginY: '10px' }}
+        variant="contained">
+        Giải tán nhóm
+      </Button>
     </Box>
   )
 }

@@ -6,11 +6,12 @@ import { useDispatch } from "react-redux";
 import { setUser, setLoading, stopLoading } from "./redux/slices/userSlice";
 import { SnackbarProvider, useSnackbar } from 'notistack';
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export default function App() {
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
-  
+  const navigate = useNavigate();
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
     if (token) {
@@ -23,6 +24,7 @@ export default function App() {
         })
         .then(res => {
           dispatch(setUser(res.data.user));
+          navigate("/chat");
         })
         .catch(err => {
           console.log(err);
@@ -36,8 +38,6 @@ export default function App() {
 
         })
         .finally(() => dispatch(stopLoading()))
-    } else {
-
     }
   }, [dispatch]);
 

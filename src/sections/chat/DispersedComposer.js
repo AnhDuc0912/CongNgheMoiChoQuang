@@ -29,10 +29,10 @@ const Textarea = styled(BaseTextareaAutosize)(
     }
   `
 );
-const DispersedComposer = ({ room }) => {
+const DispersedComposer = ({ room, members }) => {
 
     const findDispersingMember = () => {
-        return room.users.find(x => x._id === room.creatorId);
+        return members.find(x => x._id === room.creatorId);
     }
 
     return (

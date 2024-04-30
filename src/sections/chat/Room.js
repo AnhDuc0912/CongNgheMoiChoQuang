@@ -55,6 +55,14 @@ const Room = () => {
     });
   }
 
+  const dispersedRoom = (roomId) => {
+    setShowRoomInfo(false);
+
+    socket.emit('user.disperseRoom', roomId, ({ emitter, msg }) => {
+      console.log(msg);
+    });
+  }
+
   const onConnected = () => {
     setConnected(true);
     setLoading(false);
@@ -90,6 +98,11 @@ const Room = () => {
     }
   }
 
+  const onRoomDispersion = async ({ room, messages }) => {
+    setRoom(room);
+    setMessages(messages);
+  }
+
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       setMessageTimeout(true);
@@ -119,6 +132,7 @@ const Room = () => {
 
     socket.on('incomingMsg', onReceiveIncomingMsg);
     socket.on('incomingTyping', onReceiveIncomingTyping);
+    socket.on('roomDispersion', onRoomDispersion);
     socket.io.on("error", (error) => {
       console.log(error)
       socket.connect();
@@ -128,6 +142,7 @@ const Room = () => {
       socket.off('join');
       socket.off('incomingMsg');
       socket.off('incomingTyping');
+      socket.off('roomDispersion');
       socket.emit('leave', roomId);
     };
   }, [roomId]);
@@ -207,7 +222,9 @@ const Room = () => {
         })}
       </Stack>
       {room?.dispersed
-        ? <DispersedComposer room={room} />
+        ? <DispersedComposer
+          room={room}
+          members={members} />
         : <Composer
           onTyping={() => typingMsg(true)}
           onStopTyping={() => typingMsg(false)}
@@ -218,9 +235,12 @@ const Room = () => {
         anchor="right"
         open={showRoomInfo}
         onClose={() => setShowRoomInfo(false)}>
-        {/* <RoomDetail
+        <RoomDetail
+          loading={loading}
           room={room}
-          info={getRoomHeader()} /> */}
+          members={members}
+          loggingUserId={user._id}
+          onDispersedRoom={dispersedRoom} />
       </Drawer>
     </Stack>
   )
