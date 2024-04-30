@@ -44,7 +44,6 @@ const Sidebar = () => {
   const isSelected = (path) => location.pathname === path;
   const [anchorEl, setAnchorEl] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
-  const [openChangPWDialog, setOpenChangPWDialog] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -153,7 +152,7 @@ const Sidebar = () => {
           </ListItem>
 
           <ListItem
-            onClick={() => setOpenChangPWDialog(true)}
+            onClick={() => setOpenDialog(true)}
             button
             style={{ margin: "0 6px 0 6px" }}
           >
@@ -177,8 +176,8 @@ const Sidebar = () => {
       </Popover>
 
       <ChangePasswordModal
-        onClose={() => setOpenChangPWDialog(false)}
-        open={openChangPWDialog}
+        onClose={() => setOpenDialog(false)}
+        open={openDialog}
       />
       <ProfileModal onClose={() => setOpenDialog(false)} open={openDialog} />
     </Box>
