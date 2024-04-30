@@ -266,7 +266,12 @@ const CreateGroupChatDialog = ({ open, onClose, onCreateGroupChat }) => {
                 </Button>
                 <Button
                     disabled={selectedUsers.length < 2}
-                    onClick={onCreateGroup}
+                    onClick={() => {
+                        onCreateGroup();
+                        onClose();
+                        setContent('');
+                        
+                    }}
                     variant='contained'
                     color='info'
                     autoFocus >

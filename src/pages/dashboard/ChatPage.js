@@ -7,9 +7,11 @@ import { useParams } from "react-router-dom";
 import StartNewChat from "../../sections/chat/StartNewChat";
 import { socketManager } from '../../socket';
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import _ from "lodash";
 
 const Chats = () => {
+  const navigate = useNavigate();
   const socket = socketManager('rooms');
 
   const { user } = useSelector((state) => state.user);
@@ -45,6 +47,7 @@ const Chats = () => {
   const createGroupChat = (data) => {
     socket.emit('initRoomChat', data, ({ room }) => {
       setRooms((preState) => [room, ...preState]);
+      navigate("/chat/" + room._id);
     });
   }
 

@@ -1,42 +1,54 @@
 import { Box, Typography, Stack, } from "@mui/material";
 import Avatar from '@mui/material/Avatar';
+import { useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
-import { getGroupChatTitle } from "../../utils/getGroupChatTitle";
+import { filterChatTime } from "../../utils/chatTimeUtil";
+import { filterMsgSystem } from "../../utils/fitlerMsg";
+
 
 const RoomChatItem = ({
   _id,
-  users,
-  singleRoom,
-  userConfigs,
-  createdAt,
-  updatedAt,
   lastMsg,
-  loggingUserId,
-  title
+  title,
+  avatar,
+  members
 }) => {
+
   const param = useParams();
-  const getDestinationInRoom = () => {
-
-    if (Boolean(singleRoom)) {
-      const member = users.find(x => x._id !== loggingUserId);
-      return {
-        avatar: member.avatar,
-        title: member.fullName,
-        content: lastMsg.content || '',
-      }
+  const { user } = useSelector((state) => state.user);
+  const fitlerLastMsgContent = () => {
+    if (lastMsg.type === 'text') {
+      return (
+        <Typography
+          sx={{
+            fontWeight: "500",
+            color: '#696969',
+            // ...(unreadMsg > 0 && {
+            //   fontWeight: "600",
+            //   color: '#000',
+            // })
+          }}
+          fontSize="14px"
+          variant="body1">
+          {lastMsg.creatorId === user._id && "Bạn: "} {lastMsg.content}
+        </Typography>
+      )
     }
 
-    return {
-      avatar: '',
-      title: title || getGroupChatTitle(users, loggingUserId),
-      content: lastMsg?.content || '',
-    }
+    const creator = members.find(x => x._id === lastMsg.creatorId);
+    return (
+      <Typography
+        sx={{ fontWeight: "500", color: '#696969' }}
+        fontSize="14px"
+        variant="body1">
+        {creator._id === user._id ? "Bạn" : creator.fullName} {filterMsgSystem(lastMsg.content)}
+      </Typography>
+    )
   }
 
   return (
     <Stack
       component={Link}
-      //   onClick={() => readMsg(roomId)}
       to={"/chat/" + _id}
       px="15px"
       py="10px"
@@ -56,32 +68,40 @@ const RoomChatItem = ({
         })
       }}>
       <Avatar
-        alt={getDestinationInRoom().title}
-        src={getDestinationInRoom().avatar} />
+        alt={title}
+        src={avatar} />
       <Box sx={{ width: '100%' }}>
-        <Typography
-          sx={{ width: '100%', color: 'black', fontSize: "15px" }}
-          variant="subtitle1">
-          {getDestinationInRoom().title}
-        </Typography>
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          sx={{ width: '100%', overflow: 'none' }}>
+          <Typography
+            sx={{
+              color: 'black',
+              fontSize: "15px",
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis'
+            }}
+            variant="subtitle1">
+            {title}
+          </Typography>
+          <Typography
+            sx={{
+              textAlign: 'right',
+              color: 'gray',
+              fontWeight: '500',
+              fontSize: "12px"
+            }}>
+            {filterChatTime(lastMsg.createdAt)}
+          </Typography>
+        </Stack>
         <Stack
           sx={{ width: '100%' }}
           justifyContent="space-between"
           spacing="10px"
           direction="row">
-          <Typography
-            sx={{
-              fontWeight: "500",
-              color: '#696969',
-              // ...(unreadMsg > 0 && {
-              //   fontWeight: "600",
-              //   color: '#000',
-              // })
-            }}
-            fontSize="14px"
-            variant="body1">
-            {getDestinationInRoom().content}
-          </Typography>
+          {fitlerLastMsgContent()}
           {/* {(Boolean(unreadMsg) && unreadMsg > 0)
               && <Chip
                 size="small"

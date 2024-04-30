@@ -71,7 +71,7 @@ function ChangePasswordModal({ open, onClose }) {
     onSubmit: async (values) => {
       const token = localStorage.getItem("accessToken");
       try {
-        const { password, newPassword } = values; 
+        const { password, newPassword } = values;
         const payload = { password, newPassword };
         await axios.post(
           process.env.REACT_APP_API_ENDPOINT + "user/change-password",
@@ -106,7 +106,7 @@ function ChangePasswordModal({ open, onClose }) {
         }
         const { error: errorMsg } = error.response.data;
         if (errorMsg === 'Old password is incorrect.') {
-          enqueueSnackbar('Mật khẩu hiện tại không đúng', { 
+          enqueueSnackbar('Mật khẩu hiện tại không đúng', {
             variant: 'error',
             anchorOrigin: {
               vertical: 'bottom',
@@ -130,7 +130,7 @@ function ChangePasswordModal({ open, onClose }) {
         aria-labelledby="profile-modal-title"
         aria-describedby="profile-modal-description"
         className={classes.modal}
-        //   onMouseDown={handleModalClick}
+      //   onMouseDown={handleModalClick}
       >
         <form onSubmit={formik.handleSubmit}>
           <Stack

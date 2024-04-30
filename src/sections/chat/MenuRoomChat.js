@@ -6,6 +6,7 @@ import CreateGroupChatDialog from "./CreateGroupChatDialog";
 import _ from "lodash";
 import RoomChatItem from "./RoomChatItem";
 import { useState } from "react";
+import { filterRoomInfo } from "../../utils/filterRoomInfo";
 
 
 const MenuRoomChat = ({ rooms, onCreateGroupChat }) => {
@@ -16,8 +17,8 @@ const MenuRoomChat = ({ rooms, onCreateGroupChat }) => {
     <Stack
       sx={{
         overflowX: 'hidden',
-        overflowY: 'auto',
-        height: '100%',
+        overflowY: 'hidden',
+        height: '100vh',
         width: '500px'
       }}>
       <Stack
@@ -48,11 +49,16 @@ const MenuRoomChat = ({ rooms, onCreateGroupChat }) => {
           callback={(record) => console.log(record)}
         />
       </Box>
-      {_.map(rooms, (roomItem) =>
-        <RoomChatItem
-          {...roomItem}
-          loggingUserId={user._id} />
-      )}
+      <Stack sx={{ height: '100%', overflowY: 'scroll' }}>
+        {_.map(rooms, (roomItem) =>
+          <RoomChatItem
+
+            {...roomItem}
+            {...filterRoomInfo(user._id, roomItem, roomItem.users)}
+            members={roomItem.users}
+            loggingUserId={user._id} />
+        )}
+      </Stack>
       <CreateGroupChatDialog
         open={openCreateGroupChat}
         onClose={() => setOpenCreateGroupChat(false)}

@@ -90,6 +90,7 @@ const Composer = ({ onSubmitMsg, onTyping, onStopTyping }) => {
     setContent((prevInput) => prevInput + emojiObject.emoji);
   };
 
+
   return (
     <Stack
       direction="row"

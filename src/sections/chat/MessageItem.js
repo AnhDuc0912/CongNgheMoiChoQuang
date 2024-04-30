@@ -1,15 +1,10 @@
 import { Typography, Stack, Avatar, Box, Chip } from "@mui/material";
 import DoneIcon from '@mui/icons-material/Done';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
+import { filterMsgSystem } from "../../utils/fitlerMsg";
 
 
 export const NotificationMessage = ({ user, content }) => {
-  const filterMsgSystem = () => {
-    if (content === 'created this room.') {
-      return " đã tạo phòng."
-    }
-  }
-
   return (
     <Stack
       px="15px"
@@ -31,7 +26,7 @@ export const NotificationMessage = ({ user, content }) => {
             fontSize="14px"
             fontWeight="600">
             {user.fullName}
-            <span style={{ fontWeight: '400' }}>{filterMsgSystem()}</span>
+            <span style={{ fontWeight: '400' }}>{filterMsgSystem(content)}</span>
           </Typography>
         }>
       </Chip>

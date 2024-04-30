@@ -11,6 +11,8 @@ import { useSelector } from "react-redux";
 import RoomHeader from "./RoomHeader";
 import MemberTyping from "./MemberTyping";
 import { v4 as uuidv4 } from 'uuid';
+import DispersedComposer from "./DispersedComposer";
+
 
 const Room = () => {
   const { roomId } = useParams();
@@ -25,37 +27,6 @@ const Room = () => {
   const [members, setMembers] = useState([]);
   const [messages, setMessages] = useState([]);
   const [userTypingIds, setUserTypingIds] = useState([]);
-
-  const getRoomHeader = () => {
-    if (!room) {
-      return {
-        avatar: '',
-        title: 'Room mất',
-        subtitle: "Đang online"
-      }
-    }
-
-    if (room.singleRoom) {
-      const {
-        avatar,
-        fullName,
-        email,
-        phoneNumber
-      } = members.find(x => x._id !== user._id);
-      return {
-        avatar: avatar,
-        title: fullName,
-        subtitle: "Đang online",
-        email,
-        phoneNumber
-      }
-    }
-    return {
-      avatar: '',
-      title: 'Chat nhóm title',
-      subtitle: `${room.members.length} thành viên`
-    }
-  }
 
 
   const onEnteredNewMsg = async (msg) => {
@@ -170,7 +141,10 @@ const Room = () => {
         overflow: 'hidden'
       }}>
       <RoomHeader
-        header={getRoomHeader()}
+        loading={loading}
+        room={room}
+        members={members}
+        loggingUserId={user._id}
         onToggleRoomDetail={() => { setShowRoomInfo(!showRoomInfo) }} />
       <Box>
         {!loading && connected
@@ -232,18 +206,21 @@ const Room = () => {
           }
         })}
       </Stack>
-      <Composer
-        onTyping={() => typingMsg(true)}
-        onStopTyping={() => typingMsg(false)}
-        onSubmitMsg={onEnteredNewMsg}
-      />
+      {room?.dispersed
+        ? <DispersedComposer room={room} />
+        : <Composer
+          onTyping={() => typingMsg(true)}
+          onStopTyping={() => typingMsg(false)}
+          onSubmitMsg={onEnteredNewMsg}
+        />
+      }
       <Drawer
         anchor="right"
         open={showRoomInfo}
         onClose={() => setShowRoomInfo(false)}>
-        <RoomDetail
+        {/* <RoomDetail
           room={room}
-          info={getRoomHeader()} />
+          info={getRoomHeader()} /> */}
       </Drawer>
     </Stack>
   )
