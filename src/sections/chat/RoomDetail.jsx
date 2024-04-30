@@ -3,11 +3,21 @@ import IconButton from "@mui/material/IconButton";
 import { useState } from "react";
 import PersonAddAltOutlinedIcon from "@mui/icons-material/PersonAddAltOutlined";
 import AddMemberModal from "../../dialog/AddMemberModal";
+import { filterRoomInfo } from "../../utils/filterRoomInfo";
 
-const RoomDetail = ({ info, room }) => {
+const RoomDetail = ({ room, members, loggingUserId, onDispersedRoom }) => {
+  console.log(room);
+  const info = filterRoomInfo(loggingUserId, room, members);
   const [openAddMemModal, setOpenAddMemModal] = useState(false);
   return (
-    <Box sx={{ width: "350px", height: "100%" }}>
+    <Box
+      sx={{
+        width: "350px",
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
       <Box
         py="30px"
         sx={{
@@ -77,7 +87,33 @@ const RoomDetail = ({ info, room }) => {
           </Button>
         )}
       </Box>
-      <AddMemberModal room={room} open={openAddMemModal} onClose={() => {setOpenAddMemModal(false)}}/>
+      <Box
+        sx={{
+          display: "flex",
+          flex: 1,
+          flexGrow: 1,
+        }}
+      ></Box>
+      {loggingUserId === room.creatorId && (
+        <Button
+          onClick={() => {
+            onDispersedRoom(room._id);
+          }}
+          color="error"
+          sx={{ marginX: "15px", marginY: "10px" }}
+          variant="contained"
+        >
+          Giải tán nhóm
+        </Button>
+      )}
+
+      <AddMemberModal
+        room={room}
+        open={openAddMemModal}
+        onClose={() => {
+          setOpenAddMemModal(false);
+        }}
+      />
     </Box>
   );
 };

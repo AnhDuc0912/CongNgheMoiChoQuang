@@ -1,6 +1,24 @@
-import { Typography, Stack, Avatar, Box, Chip } from "@mui/material";
+import {
+  Typography,
+  Stack,
+  Avatar,
+  Box,
+  Chip,
+  Tooltip,
+  IconButton,
+  Popover,
+  List,
+  ListItemButton,
+  ListItemText,
+  Divider,
+  ListItemIcon,
+} from "@mui/material";
 import DoneIcon from "@mui/icons-material/Done";
 import DoneAllIcon from "@mui/icons-material/DoneAll";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import { useState } from "react";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import ReplayIcon from "@mui/icons-material/Replay";
 
 export const NotificationMessage = ({ user, content, newMember }) => {
   console.log(newMember);
@@ -107,6 +125,18 @@ export const LeftMessage = ({ user, content }) => {
 };
 
 export const RightMessage = ({ content, seen = false, sent = true }) => {
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? "simple-popover" : undefined;
   return (
     <Stack
       px="15px"
@@ -116,6 +146,43 @@ export const RightMessage = ({ content, seen = false, sent = true }) => {
       bgcolor="whitesmoke"
       direction="row"
     >
+      <IconButton
+        aria-describedby={id}
+        variant="contained"
+        onClick={handleClick}
+      >
+        <MoreHorizIcon />
+      </IconButton>
+      <Popover
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+      >
+        <List>
+          <ListItemButton>
+            <ListItemIcon>
+              <ContentCopyIcon />
+            </ListItemIcon>
+            <ListItemText primary="Sao chép tin nhắn" />
+          </ListItemButton>
+          <Divider />
+          <ListItemButton>
+            <ListItemIcon>
+              <ReplayIcon color="error"/>
+            </ListItemIcon>
+            <ListItemText primary="Thu hồi tin nhắn" sx={{ color: "red" }}/>
+          </ListItemButton>
+        </List>
+      </Popover>
       <Stack
         sx={{
           padding: "10px",
