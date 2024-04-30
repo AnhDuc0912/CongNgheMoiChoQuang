@@ -28,6 +28,38 @@ const Room = () => {
   const [messages, setMessages] = useState([]);
   const [userTypingIds, setUserTypingIds] = useState([]);
 
+  const getRoomHeader = () => {
+    if (!room) {
+      return {
+        avatar: '',
+        title: 'Room mất',
+        subtitle: "Đang online"
+      }
+    }
+
+    if (room.singleRoom) {
+      const {
+        avatar,
+        fullName,
+        email,
+        phoneNumber
+      } = members.find(x => x._id !== user._id);
+      return {
+        avatar: avatar,
+        title: fullName,
+        subtitle: "Đang online",
+        email,
+        phoneNumber
+      }
+    }
+    return {
+      avatar: '',
+      title: 'Chat nhóm title',
+      subtitle: `${room.members.length} thành viên`,
+      
+    }
+  }
+
 
   const onEnteredNewMsg = async (msg) => {
     if (messages.length >= 0) {
@@ -197,9 +229,13 @@ const Room = () => {
         {/* Msg from socket */}
         {_.map(messages, (message, idx) => {
           if (message.type === 'system-notification') {
+            const messageContent = message.content;
+            const parts = messageContent.split(" "); 
+            const newMemberId = parts[1];
             return <NotificationMessage
               key={idx}
               user={members.find(x => x._id === message.creatorId)}
+              newMember={members.find(x => x._id === newMemberId)}
               {...message}
             />
           } else {
