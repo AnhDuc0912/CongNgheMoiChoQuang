@@ -1,11 +1,11 @@
 import { Box, Typography, Stack, Avatar, Divider, Button } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
-import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
 import { useState } from "react";
-import NotificationsOffOutlinedIcon from "@mui/icons-material/NotificationsOffOutlined";
-import PushPinOutlinedIcon from "@mui/icons-material/PushPinOutlined";
+import PersonAddAltOutlinedIcon from "@mui/icons-material/PersonAddAltOutlined";
+import AddMemberModal from "../../dialog/AddMemberModal";
 
 const RoomDetail = ({ info, room }) => {
+  const [openAddMemModal, setOpenAddMemModal] = useState(false);
   return (
     <Box sx={{ width: "350px", height: "100%" }}>
       <Box
@@ -61,7 +61,13 @@ const RoomDetail = ({ info, room }) => {
             </Typography>
             <Typography mt="10px" fontSize="16px" fontWeight="500">
               {info.subtitle}
-              <IconButton>{info.icon}</IconButton>
+              <IconButton
+                onClick={() => {
+                  setOpenAddMemModal(!openAddMemModal);
+                }}
+              >
+                <PersonAddAltOutlinedIcon />
+              </IconButton>
             </Typography>
           </Box>
         )}
@@ -71,6 +77,7 @@ const RoomDetail = ({ info, room }) => {
           </Button>
         )}
       </Box>
+      <AddMemberModal room={room} open={openAddMemModal} onClose={() => {setOpenAddMemModal(false)}}/>
     </Box>
   );
 };

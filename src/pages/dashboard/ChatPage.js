@@ -43,6 +43,7 @@ const Chats = () => {
   }
 
   const createGroupChat = (data) => {
+    console.log(data);
     socket.emit('initRoomChat', data, ({ room }) => {
       setRooms((preState) => [room, ...preState]);
     });

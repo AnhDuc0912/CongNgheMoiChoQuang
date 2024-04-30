@@ -1,7 +1,10 @@
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import {
   Avatar,
   Button,
   Dialog,
+  IconButton,
+  InputAdornment,
   Stack,
   TextField,
   Typography,
@@ -10,6 +13,7 @@ import { makeStyles } from "@mui/styles";
 import axios from "axios";
 import { useFormik } from "formik";
 import { enqueueSnackbar } from "notistack";
+import { useState } from "react";
 import * as Yup from "yup";
 
 const useStyles = makeStyles((theme) => ({
@@ -37,6 +41,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function ChangePasswordModal({ open, onClose }) {
+  const [showPassword, setShowPassword] = useState(false);
+  const [showNewPassword, setNewShowPassword] = useState(false);
+  const [showNewPasswordConfirm, setNewShowPasswordConfirm] = useState(false);
+
   const classes = useStyles();
 
   const formik = useFormik({
@@ -67,7 +75,7 @@ function ChangePasswordModal({ open, onClose }) {
         const { password, newPassword } = values; 
         const payload = { password, newPassword };
         await axios.post(
-          process.env.REACT_APP_API_ENDPOINT + "user/change-password",
+          process.env.REACT_APP_API_ENDPOINT + "user/me/change-password",
           payload,
           {
             headers: {
@@ -140,11 +148,8 @@ function ChangePasswordModal({ open, onClose }) {
               Thông tin tài khoản
             </Typography>
             <TextField
-              id="fullName"
               className={classes.formField}
-              label="Họ và tên"
               fullWidth
-<<<<<<< HEAD
               id="password"
               label="Mật khẩu hiện tại"
               onChange={formik.handleChange}
@@ -166,16 +171,10 @@ function ChangePasswordModal({ open, onClose }) {
                   </InputAdornment>
                 ),
               }}
-=======
-              variant="outlined"
->>>>>>> b8f96542e0416febdea4171fae21c1f98d399e91
             />
             <TextField
-              id="email"
               className={classes.formField}
-              label="Email"
               fullWidth
-<<<<<<< HEAD
               id="newPassword"
               label="Mật khẩu mới"
               onChange={formik.handleChange}
@@ -197,16 +196,10 @@ function ChangePasswordModal({ open, onClose }) {
                   </InputAdornment>
                 ),
               }}
-=======
-              variant="outlined"
->>>>>>> b8f96542e0416febdea4171fae21c1f98d399e91
             />
             <TextField
-              id="phoneNumber"
               className={classes.formField}
-              label="Điện thoại"
               fullWidth
-<<<<<<< HEAD
               id="confirmPassword"
               label="Nhập lại mật khẩu"
               onChange={formik.handleChange}
@@ -234,9 +227,6 @@ function ChangePasswordModal({ open, onClose }) {
                   </InputAdornment>
                 ),
               }}
-=======
-              variant="outlined"
->>>>>>> b8f96542e0416febdea4171fae21c1f98d399e91
             />
             <Button type="submit" variant="contained" color="primary" fullWidth>
               Cập nhật
