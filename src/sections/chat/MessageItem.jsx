@@ -20,14 +20,10 @@ import { useState } from "react";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import ReplayIcon from "@mui/icons-material/Replay";
 import { enqueueSnackbar } from "notistack";
+import { filterMsgSystem } from "../../utils/fitlerMsg";
 
-export const NotificationMessage = ({ user, content, newMember }) => {
-  console.log(newMember);
-  const filterMsgSystem = () => {
-    if (content === "created this room.") {
-      return " đã tạo phòng.";
-    }
-  };
+
+export const NotificationMessage = ({ user, content, members }) => {
 
   return (
     <Stack
@@ -50,13 +46,12 @@ export const NotificationMessage = ({ user, content, newMember }) => {
           label={
             <Typography fontSize="14px" fontWeight="600">
               {user.fullName}
-              <span style={{ fontWeight: "400" }}>{filterMsgSystem()}</span>
+              <span style={{ fontWeight: "400" }}>{filterMsgSystem(content)}</span>
             </Typography>
           }
         />
       )}
-
-      {newMember && (
+      {/^add/.test(content) && (
         <Chip
           sx={{
             fontSize: "12px",
@@ -66,11 +61,9 @@ export const NotificationMessage = ({ user, content, newMember }) => {
           }}
           avatar={<Avatar src={user.avatar} />}
           label={
-            <Typography sx={{ fontSize: "14px", fontWeight: "600" }}>
+            <Typography fontSize="14px" fontWeight="600">
               {user.fullName}
-              <span style={{ fontWeight: "400" }}> đã thêm </span>
-              {newMember.fullName}
-              <span style={{ fontWeight: "400" }}> vào phòng.</span>
+              <span style={{ fontWeight: "400" }}>{filterMsgSystem(content, members)}</span>
             </Typography>
           }
         />
@@ -79,15 +72,42 @@ export const NotificationMessage = ({ user, content, newMember }) => {
   );
 };
 
-export const LeftMessage = ({ user, content }) => {
-  return (
-    <Stack
-      px="15px"
-      py="10px"
+export const LeftMessage = ({ user, content, redeem = false }) => {
+  return (redeem
+    ? <Stack
       spacing="15px"
       bgcolor="whitesmoke"
-      direction="row"
-    >
+      mb="10px"
+      direction="row">
+      <Avatar alt={user.fullName} src={user.avatar} />
+      <Box sx={{
+        display: 'flex',
+        alignSelf: 'flex-end',
+        marginInlineEnd: '15px',
+        borderRadius: '15px',
+        minWidth: '180px',
+        maxWidth: '350px',
+        justifyContent: 'flex-end',
+        border: '2px solid #d3d3d3',
+        paddingX: '7px',
+        paddingY: '7px',
+        marginBottom: '10px',
+      }}>
+        <Typography
+          color="black"
+          fontWeight="500"
+          fontStyle="italic"
+          fontSize="15px"
+          variant="body1">
+          {user.fullName} đã thu hồi tin nhắn.
+        </Typography>
+      </Box>
+    </Stack>
+    : <Stack
+      mb="10px"
+      spacing="15px"
+      bgcolor="whitesmoke"
+      direction="row">
       <Avatar alt={user.fullName} src={user.avatar} />
       <Box>
         <Typography sx={{ fontSize: "13px", mb: "5px" }}>
@@ -99,15 +119,13 @@ export const LeftMessage = ({ user, content }) => {
             borderRadius: "10px",
             backgroundColor: "white",
           }}
-          direction="column"
-        >
+          direction="column">
           <Typography
             sx={{ maxWidth: "700px", minWidth: "100px" }}
             color="black"
             fontWeight="500"
             fontSize="15px"
-            variant="body1"
-          >
+            variant="body1">
             {content}
           </Typography>
           <Typography
@@ -115,8 +133,7 @@ export const LeftMessage = ({ user, content }) => {
             color="black"
             fontWeight="500"
             fontSize="12px"
-            variant="body1"
-          >
+            variant="body1">
             {"20:54"}
           </Typography>
         </Stack>
@@ -125,7 +142,14 @@ export const LeftMessage = ({ user, content }) => {
   );
 };
 
-export const RightMessage = ({ content, seen = false, sent = true }) => {
+export const RightMessage = ({
+  content,
+  seen = false,
+  sent = true,
+  onRedeemMsg,
+  msgId,
+  redeem = false
+}) => {
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleClick = (event) => {
@@ -155,22 +179,48 @@ export const RightMessage = ({ content, seen = false, sent = true }) => {
       });
   };
 
+
+
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
-  return (
-    <Stack
-      px="15px"
-      py="10px"
+
+
+
+  return (redeem
+    ? <Box
+      sx={{
+        marginBottom: '10px',
+        display: 'flex',
+        alignSelf: 'flex-end',
+        borderRadius: '15px',
+        width: '180px',
+        justifyContent: 'flex-end',
+        border: '2px solid #d3d3d3',
+        paddingX: '7px',
+        paddingY: '7px'
+      }}>
+      <Typography
+        textAlign="center"
+        color="black"
+        fontWeight="500"
+        fontStyle="italic"
+        fontSize="15px"
+        variant="body1">
+        {"Bạn đã thu hồi tin nhắn"}
+      </Typography>
+    </Box>
+    : <Stack
+      mb="10px"
       justifyContent="flex-end"
       spacing="15px"
       bgcolor="whitesmoke"
-      direction="row"
-    >
+      direction="row">
       <IconButton
+        size="small"
+        sx={{ aspectRatio: 1 }}
         aria-describedby={id}
         variant="contained"
-        onClick={handleClick}
-      >
+        onClick={handleClick}>
         <MoreHorizIcon />
       </IconButton>
       <Popover
@@ -185,17 +235,16 @@ export const RightMessage = ({ content, seen = false, sent = true }) => {
         transformOrigin={{
           vertical: "top",
           horizontal: "right",
-        }}
-      >
+        }}>
         <List>
-          <ListItemButton onClick={() => {copyToClipboard(content)}}>
+          <ListItemButton onClick={() => { copyToClipboard(content) }}>
             <ListItemIcon>
               <ContentCopyIcon />
             </ListItemIcon>
             <ListItemText primary="Sao chép tin nhắn" />
           </ListItemButton>
           <Divider />
-          <ListItemButton>
+          <ListItemButton onClick={() => onRedeemMsg(msgId)}>
             <ListItemIcon>
               <ReplayIcon color="error" />
             </ListItemIcon>
@@ -209,8 +258,7 @@ export const RightMessage = ({ content, seen = false, sent = true }) => {
           borderRadius: "10px",
           backgroundColor: "white",
         }}
-        direction="column"
-      >
+        direction="column">
         <Typography
           sx={{ maxWidth: "700px", minWidth: "100px" }}
           color="black"
@@ -247,8 +295,7 @@ export const RightMessage = ({ content, seen = false, sent = true }) => {
               color="#0162C4"
               fontWeight="500"
               fontSize="10px"
-              variant="body1"
-            >
+              variant="body1">
               {`Sending`}
             </Typography>
           )}

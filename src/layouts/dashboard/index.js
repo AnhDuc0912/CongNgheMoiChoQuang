@@ -10,8 +10,6 @@ import Sidebar from "./Sidebar";
 const DashboardLayout = () => {
   const theme = useTheme();
   const { user, isLoading } = useSelector((state) => state.user);
-  console.log(user);
-  console.log("DashboardLayout");
 
   if (isLoading ) {
     return (

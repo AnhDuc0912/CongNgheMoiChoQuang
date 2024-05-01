@@ -15,7 +15,6 @@ const MemberTyping = ({ members, typingUserIds }) => {
           const member = members.find(x => x._id === itemId);
           return (
             <Stack
-              px="15px"
               py="10px"
               spacing="15px"
               bgcolor="whitesmoke"

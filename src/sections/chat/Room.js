@@ -28,38 +28,6 @@ const Room = () => {
   const [messages, setMessages] = useState([]);
   const [userTypingIds, setUserTypingIds] = useState([]);
 
-  const getRoomHeader = () => {
-    if (!room) {
-      return {
-        avatar: '',
-        title: 'Room mất',
-        subtitle: "Đang online"
-      }
-    }
-
-    if (room.singleRoom) {
-      const {
-        avatar,
-        fullName,
-        email,
-        phoneNumber
-      } = members.find(x => x._id !== user._id);
-      return {
-        avatar: avatar,
-        title: fullName,
-        subtitle: "Đang online",
-        email,
-        phoneNumber
-      }
-    }
-    return {
-      avatar: '',
-      title: 'Chat nhóm title',
-      subtitle: `${room.members.length} thành viên`,
-      
-    }
-  }
-
 
   const onEnteredNewMsg = async (msg) => {
     if (messages.length >= 0) {
@@ -95,6 +63,23 @@ const Room = () => {
     });
   }
 
+  const addMember = (roomId, memberId) => {
+    socket.emit('user.addMember', roomId, memberId, (response) => {
+      setShowRoomInfo(false);
+    });
+  }
+
+  const redeemMsg = (msgId) => {
+    socket.emit('user.redeemMsg', msgId, (response) => {
+      setMessages((pre) => pre.map(item => {
+        if (item._id === msgId) {
+          item.redeem = true;
+        }
+        return item;
+      }));
+    });
+  }
+
   const onConnected = () => {
     setConnected(true);
     setLoading(false);
@@ -119,6 +104,12 @@ const Room = () => {
     setMessages((pre) => [msg, ...pre]);
   }
 
+  const onAddedMember = async (room, msg) => {
+    setMessages((pre) => [msg, ...pre]);
+    setMembers(room.users)
+    setRoom(room);
+  }
+
   const onReceiveIncomingTyping = async (roomId, isTyping, typingUserId) => {
     if (!isTyping) {
       setUserTypingIds(userTypingIds.filter(ids => ids !== typingUserId))
@@ -133,6 +124,17 @@ const Room = () => {
   const onRoomDispersion = async ({ room, messages }) => {
     setRoom(room);
     setMessages(messages);
+  }
+
+  const onIncomingRedeemMsg = async (msg) => {
+    console.log('incomingRedeemMsg: ' + msg._id);
+    setMessages((pre) => pre.map(item => {
+      if (item._id === msg._id) {
+        item.redeem = true;
+        return msg;
+      }
+      return item;
+    }));
   }
 
   useEffect(() => {
@@ -165,6 +167,8 @@ const Room = () => {
     socket.on('incomingMsg', onReceiveIncomingMsg);
     socket.on('incomingTyping', onReceiveIncomingTyping);
     socket.on('roomDispersion', onRoomDispersion);
+    socket.on('addMember', onAddedMember);
+    socket.on('incomingRedeemMsg', onIncomingRedeemMsg)
     socket.io.on("error", (error) => {
       console.log(error)
       socket.connect();
@@ -175,6 +179,8 @@ const Room = () => {
       socket.off('incomingMsg');
       socket.off('incomingTyping');
       socket.off('roomDispersion');
+      socket.off('addMember');
+      socket.off('incomingRedeemMsg');
       socket.emit('leave', roomId);
     };
   }, [roomId]);
@@ -193,6 +199,7 @@ const Room = () => {
         members={members}
         loggingUserId={user._id}
         onToggleRoomDetail={() => { setShowRoomInfo(!showRoomInfo) }} />
+
       <Box>
         {!loading && connected
           ? (!messageTimeout &&
@@ -219,6 +226,7 @@ const Room = () => {
           flexDirection: 'column-reverse',
           height: '100%',
           width: '100%',
+          paddingX: '10px'
         }}>
         {(members.length > 0 && userTypingIds.length > 0) &&
           <MemberTyping
@@ -229,13 +237,10 @@ const Room = () => {
         {/* Msg from socket */}
         {_.map(messages, (message, idx) => {
           if (message.type === 'system-notification') {
-            const messageContent = message.content;
-            const parts = messageContent.split(" "); 
-            const newMemberId = parts[1];
             return <NotificationMessage
               key={idx}
+              members={members}
               user={members.find(x => x._id === message.creatorId)}
-              newMember={members.find(x => x._id === newMemberId)}
               {...message}
             />
           } else {
@@ -244,6 +249,8 @@ const Room = () => {
                 <RightMessage
                   key={idx}
                   {...message}
+                  msgId={message._id}
+                  onRedeemMsg={redeemMsg}
                 />
               )
             }
@@ -251,6 +258,7 @@ const Room = () => {
               <LeftMessage
                 key={idx}
                 content={message.content}
+                redeem={message.redeem}
                 user={members.find(x => x._id === message.creatorId)}
               />
             )
@@ -276,7 +284,8 @@ const Room = () => {
           room={room}
           members={members}
           loggingUserId={user._id}
-          onDispersedRoom={dispersedRoom} />
+          onDispersedRoom={dispersedRoom}
+          onAddMember={addMember} />
       </Drawer>
     </Stack>
   )

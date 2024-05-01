@@ -1,36 +1,6 @@
-import { Box, Popover, Stack, Typography } from "@mui/material";
-import { TextareaAutosize as BaseTextareaAutosize } from "@mui/base/TextareaAutosize";
-import { styled } from "@mui/system";
+import { Box, Typography } from "@mui/material";
 
-const Textarea = styled(BaseTextareaAutosize)(
-    ({ theme }) => `
-    box-sizing: border-box;
-    font-size: 0.875rem;
-    font-weight: 500;
-    width: 100%;
-    font-family: inherit;
-    line-height: 1.5;
-    padding: 12px;
-    border-radius: 12px 12px 12px 12px;
-    color: ${"black"};
-    background: white;
-    border: none;
-    resize: none;
-    font-size: 14px;
-    &:hover {
-      
-    }
-    &:focus {
-      outline: 0;
-    }
-    // firefox
-    &:focus-visible {
-      outline: 0;
-    }
-  `
-);
 const DispersedComposer = ({ room, members }) => {
-
     const findDispersingMember = () => {
         return members.find(x => x._id === room.creatorId);
     }

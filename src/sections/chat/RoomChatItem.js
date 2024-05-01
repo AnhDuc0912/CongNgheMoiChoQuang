@@ -16,7 +16,7 @@ const RoomChatItem = ({
 
   const param = useParams();
   const { user } = useSelector((state) => state.user);
-  
+
   const fitlerLastMsgContent = () => {
     if (lastMsg.type === 'text') {
       return (
@@ -42,7 +42,7 @@ const RoomChatItem = ({
         sx={{ fontWeight: "500", color: '#696969' }}
         fontSize="14px"
         variant="body1">
-        {creator._id === user._id ? "Bạn" : creator.fullName} {filterMsgSystem(lastMsg.content)}
+        {creator._id === user._id ? "Bạn" : creator.fullName} {filterMsgSystem(lastMsg.content, members)}
       </Typography>
     )
   }

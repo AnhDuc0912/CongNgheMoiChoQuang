@@ -1,14 +1,20 @@
-import { Box, Typography, Stack, Avatar, Divider, Button } from "@mui/material";
+import { Box, Typography, Avatar, Button } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import { useState } from "react";
 import PersonAddAltOutlinedIcon from "@mui/icons-material/PersonAddAltOutlined";
 import AddMemberModal from "../../dialog/AddMemberModal";
 import { filterRoomInfo } from "../../utils/filterRoomInfo";
 
-const RoomDetail = ({ room, members, loggingUserId, onDispersedRoom }) => {
-  console.log(room);
+const RoomDetail = ({
+  room,
+  members,
+  loggingUserId,
+  onDispersedRoom,
+  onAddMember
+}) => {
   const info = filterRoomInfo(loggingUserId, room, members);
   const [openAddMemModal, setOpenAddMemModal] = useState(false);
+
   return (
     <Box
       sx={{
@@ -71,13 +77,14 @@ const RoomDetail = ({ room, members, loggingUserId, onDispersedRoom }) => {
             </Typography>
             <Typography mt="10px" fontSize="16px" fontWeight="500">
               {info.subtitle}
-              <IconButton
-                onClick={() => {
-                  setOpenAddMemModal(!openAddMemModal);
-                }}
-              >
-                <PersonAddAltOutlinedIcon />
-              </IconButton>
+              {!room.singleRoom &&
+                <IconButton
+                  onClick={() => {
+                    setOpenAddMemModal(true);
+                  }}>
+                  <PersonAddAltOutlinedIcon />
+                </IconButton>
+              }
             </Typography>
           </Box>
         )}
@@ -94,26 +101,27 @@ const RoomDetail = ({ room, members, loggingUserId, onDispersedRoom }) => {
           flexGrow: 1,
         }}
       ></Box>
-      {loggingUserId === room.creatorId && (
+      {(loggingUserId === room.creatorId && !room.singleRoom) && (
         <Button
           onClick={() => {
             onDispersedRoom(room._id);
           }}
           color="error"
           sx={{ marginX: "15px", marginY: "10px" }}
-          variant="contained"
-        >
+          variant="contained">
           Giải tán nhóm
         </Button>
       )}
-
-      <AddMemberModal
-        room={room}
-        open={openAddMemModal}
-        onClose={() => {
-          setOpenAddMemModal(false);
-        }}
-      />
+      {!room.singleRoom &&
+        <AddMemberModal
+          room={room}
+          open={openAddMemModal}
+          addMemberToRoom={onAddMember}
+          onClose={() => {
+            setOpenAddMemModal(false);
+          }}
+        />
+      }
     </Box>
   );
 };

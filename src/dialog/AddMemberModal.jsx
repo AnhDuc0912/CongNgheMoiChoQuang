@@ -17,7 +17,8 @@ import _ from "lodash";
 import axios from "axios";
 import { enqueueSnackbar } from "notistack";
 
-const AddMemberModal = ({ open, onClose, room }) => {
+const AddMemberModal = ({ open, onClose, room, addMemberToRoom }) => {
+
   const [searchText, setSearchText] = React.useState("");
   const [findingResult, setFindingResult] = React.useState([]);
 
@@ -39,32 +40,6 @@ const AddMemberModal = ({ open, onClose, room }) => {
     }
   };
 
-  const addMemberToRoom = async (roomId, memberId) => {
-    try {
-      const token = localStorage.getItem("accessToken");
-      await axios.post(
-        process.env.REACT_APP_API_ENDPOINT + `room/${roomId}/members`,
-        {
-          memberId: memberId,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      onClose();
-    } catch (error) {
-      enqueueSnackbar('Không thể thêm thành viên', { 
-        variant: 'error',
-        anchorOrigin: {
-          vertical: 'bottom',
-          horizontal: 'right'
-        }
-      });
-    }
-  };
 
   useEffect(() => {
     const timerId = setTimeout(() => {
@@ -102,7 +77,10 @@ const AddMemberModal = ({ open, onClose, room }) => {
               _.map(findingResult, (user) => (
                 <ListItemButton
                   key={user._id}
-                  onClick={() => addMemberToRoom(room._id, user._id)}
+                  onClick={() => {
+                    addMemberToRoom(room._id, user._id);
+                    onClose();
+                  }}
                 >
                   <ListItemAvatar>
                     <Avatar />

@@ -29,8 +29,7 @@ const Chats = () => {
     }
   }
 
-  const onReceiveIncomingMsg = (roomId, room) => {
-    console.log("onReceiveIncomingMsg");
+  const onReceiveIncomingMsg = (roomId, room) => {  
     setRooms((preState) => [room, ...(preState.filter(x => x._id !== roomId))]);
   }
 
@@ -45,7 +44,6 @@ const Chats = () => {
   }
 
   const createGroupChat = (data) => {
-    console.log(data);
     socket.emit('initRoomChat', data, ({ room }) => {
       setRooms((preState) => [room, ...preState]);
       navigate("/chat/" + room._id);

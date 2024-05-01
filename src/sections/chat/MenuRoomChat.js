@@ -52,7 +52,6 @@ const MenuRoomChat = ({ rooms, onCreateGroupChat }) => {
       <Stack sx={{ height: '100%', overflowY: 'scroll' }}>
         {_.map(rooms, (roomItem) =>
           <RoomChatItem
-
             {...roomItem}
             {...filterRoomInfo(user._id, roomItem, roomItem.users)}
             members={roomItem.users}
