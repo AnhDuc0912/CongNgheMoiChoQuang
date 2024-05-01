@@ -4,7 +4,8 @@ import { useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import { filterChatTime } from "../../utils/chatTimeUtil";
 import { filterMsgSystem } from "../../utils/fitlerMsg";
-
+import PhotoIcon from '@mui/icons-material/Photo';
+import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 
 const RoomChatItem = ({
   _id,
@@ -32,6 +33,36 @@ const RoomChatItem = ({
           fontSize="14px"
           variant="body1">
           {lastMsg.creatorId === user._id && "Bạn: "} {lastMsg.content}
+        </Typography>
+      )
+    } else if (lastMsg.type === 'image') {
+      return (
+        <Typography
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyItems: 'center',
+            fontWeight: "500",
+            color: '#696969',
+          }}
+          fontSize="14px"
+          variant="body1">
+          {lastMsg.creatorId === user._id && "Bạn:  "} <PhotoIcon sx={{ color: '#d9d9d9', mr: '5px' }} /> Hình ảnh
+        </Typography>
+      )
+    } else if (lastMsg.type === 'file') {
+      return (
+        <Typography
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyItems: 'center',
+            fontWeight: "500",
+            color: '#696969',
+          }}
+          fontSize="14px"
+          variant="body1">
+          {lastMsg.creatorId === user._id && "Bạn:  "} <FolderOpenIcon sx={{ color: '#d9d9d9', mr: '5px' }} /> tập tin
         </Typography>
       )
     }

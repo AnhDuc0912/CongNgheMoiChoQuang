@@ -259,6 +259,8 @@ const Room = () => {
                 key={idx}
                 content={message.content}
                 redeem={message.redeem}
+                attachment={message.attachment}
+                type={message.type}
                 user={members.find(x => x._id === message.creatorId)}
               />
             )

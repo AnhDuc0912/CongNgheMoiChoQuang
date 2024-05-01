@@ -13,18 +13,16 @@ import {
   Divider,
   ListItemIcon,
 } from "@mui/material";
-import DoneIcon from "@mui/icons-material/Done";
-import DoneAllIcon from "@mui/icons-material/DoneAll";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { useState } from "react";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import ReplayIcon from "@mui/icons-material/Replay";
 import { enqueueSnackbar } from "notistack";
 import { filterMsgSystem } from "../../utils/fitlerMsg";
-
+import { readUrl } from "../../utils/readUrl";
+import AttachFileIcon from '@mui/icons-material/AttachFile';
 
 export const NotificationMessage = ({ user, content, members }) => {
-
   return (
     <Stack
       px="15px"
@@ -72,7 +70,107 @@ export const NotificationMessage = ({ user, content, members }) => {
   );
 };
 
-export const LeftMessage = ({ user, content, redeem = false }) => {
+const MsgContent = ({
+  type = 'text',
+  content,
+  attachment
+}) => {
+  return (
+    <Stack
+      sx={{ maxWidth: "700px", minWidth: "100px" }}
+      direction="column">
+      {(type === 'image' && attachment) &&
+        <img
+          alt={attachment.fileName}
+          style={{
+            objectFit: 'cover',
+            marginTop: '10px',
+            borderRadius: content ? '15px 15px 0px 0px ' : '15px',
+            width: '200px',
+            height: '200px',
+            marginBottom: content ? '0px' : '10px'
+          }}
+          src={readUrl(attachment.url)}
+        />
+      }
+      {(type === 'file' && attachment) &&
+        <Stack
+          direction="row"
+          sx={{
+            height: '70px',
+            padding: "10px",
+            alignItems: 'center',
+            borderRadius: "10px",
+            backgroundColor: "white",
+          }}>
+          <Box
+            sx={{
+              marginLeft: '10px',
+              height: '40px',
+              width: '40px',
+              aspectRatio: 1,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: '200px',
+              backgroundColor: '#f9f9f9'
+            }}>
+            <AttachFileIcon />
+          </Box>
+          <Box
+            onClick={() => window.location.assign(attachment.url)}
+            sx={{ width: '100%', marginX: '10px' }}>
+            <Typography
+              fontWeight="700"
+              fontSize="14px">
+              {attachment.fileName || 'Không xác định'}
+            </Typography>
+            <Typography
+              fontWeight="500"
+              fontSize="14px">
+              {attachment.fileSize || 'Không xác định'}
+            </Typography>
+          </Box>
+        </Stack>
+      }
+      {
+        (content && content.length > 0) &&
+        <Stack
+          sx={{
+            padding: "10px",
+            borderRadius: (attachment && type === 'image') ? '0px 0px 15px 15px' : '10px',
+            backgroundColor: "white",
+          }}
+          direction="column">
+          <Typography
+            color="black"
+            fontWeight="500"
+            fontSize="15px"
+            variant="body1">
+            {content}
+          </Typography>
+          <Typography
+            alignSelf="flex-end"
+            mt="5px"
+            color="black"
+            fontWeight="500"
+            fontSize="12px"
+            variant="body1">
+            {"20:54"}
+          </Typography>
+        </Stack>
+      }
+    </Stack >
+  )
+}
+
+export const LeftMessage = ({
+  user,
+  content,
+  redeem = false,
+  type = 'text',
+  attachment
+}) => {
   return (redeem
     ? <Stack
       spacing="15px"
@@ -113,30 +211,11 @@ export const LeftMessage = ({ user, content, redeem = false }) => {
         <Typography sx={{ fontSize: "13px", mb: "5px" }}>
           {user.fullName}
         </Typography>
-        <Stack
-          sx={{
-            padding: "10px",
-            borderRadius: "10px",
-            backgroundColor: "white",
-          }}
-          direction="column">
-          <Typography
-            sx={{ maxWidth: "700px", minWidth: "100px" }}
-            color="black"
-            fontWeight="500"
-            fontSize="15px"
-            variant="body1">
-            {content}
-          </Typography>
-          <Typography
-            mt="5px"
-            color="black"
-            fontWeight="500"
-            fontSize="12px"
-            variant="body1">
-            {"20:54"}
-          </Typography>
-        </Stack>
+        <MsgContent
+          content={content}
+          type={type}
+          attachment={attachment}
+        />
       </Box>
     </Stack>
   );
@@ -148,7 +227,9 @@ export const RightMessage = ({
   sent = true,
   onRedeemMsg,
   msgId,
-  redeem = false
+  redeem = false,
+  type,
+  attachment
 }) => {
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -252,55 +333,11 @@ export const RightMessage = ({
           </ListItemButton>
         </List>
       </Popover>
-      <Stack
-        sx={{
-          padding: "10px",
-          borderRadius: "10px",
-          backgroundColor: "white",
-        }}
-        direction="column">
-        <Typography
-          sx={{ maxWidth: "700px", minWidth: "100px" }}
-          color="black"
-          fontWeight="500"
-          fontSize="15px"
-          variant="body1"
-        >
-          {content}
-        </Typography>
-        <Stack
-          justifyContent="space-between"
-          alignItems="center"
-          sx={{ width: "100%" }}
-          direction="row"
-        >
-          <Typography
-            mt="5px"
-            mr="5px"
-            color="black"
-            fontWeight="500"
-            fontSize="12px"
-            variant="body1"
-          >
-            {"20:54"}
-          </Typography>
-          {sent ? (
-            seen ? (
-              <DoneAllIcon fontVariant="small" sx={{ color: "#0162C4" }} />
-            ) : (
-              <DoneIcon fontSize="small" sx={{ color: "#0162C4" }} />
-            )
-          ) : (
-            <Typography
-              color="#0162C4"
-              fontWeight="500"
-              fontSize="10px"
-              variant="body1">
-              {`Sending`}
-            </Typography>
-          )}
-        </Stack>
-      </Stack>
+      <MsgContent
+        content={content}
+        type={type}
+        attachment={attachment}
+      />
     </Stack>
   );
 };
