@@ -20,7 +20,7 @@ import ReplayIcon from "@mui/icons-material/Replay";
 import { enqueueSnackbar } from "notistack";
 import { filterMsgSystem } from "../../utils/fitlerMsg";
 import { readUrl } from "../../utils/readUrl";
-import AttachFileIcon from '@mui/icons-material/AttachFile';
+import AttachFileIcon from "@mui/icons-material/AttachFile";
 
 export const NotificationMessage = ({ user, content, members }) => {
   return (
@@ -44,7 +44,9 @@ export const NotificationMessage = ({ user, content, members }) => {
           label={
             <Typography fontSize="14px" fontWeight="600">
               {user.fullName}
-              <span style={{ fontWeight: "400" }}>{filterMsgSystem(content)}</span>
+              <span style={{ fontWeight: "400" }}>
+                {filterMsgSystem(content)}
+              </span>
             </Typography>
           }
         />
@@ -61,7 +63,9 @@ export const NotificationMessage = ({ user, content, members }) => {
           label={
             <Typography fontSize="14px" fontWeight="600">
               {user.fullName}
-              <span style={{ fontWeight: "400" }}>{filterMsgSystem(content, members)}</span>
+              <span style={{ fontWeight: "400" }}>
+                {filterMsgSystem(content, members)}
+              </span>
             </Typography>
           }
         />
@@ -70,83 +74,78 @@ export const NotificationMessage = ({ user, content, members }) => {
   );
 };
 
-const MsgContent = ({
-  type = 'text',
-  content,
-  attachment
-}) => {
+const MsgContent = ({ type = "text", content, attachment }) => {
   return (
-    <Stack
-      sx={{ maxWidth: "700px", minWidth: "100px" }}
-      direction="column">
-      {(type === 'image' && attachment) &&
+    <Stack sx={{ maxWidth: "700px", minWidth: "100px" }} direction="column">
+      {type === "image" && attachment && (
         <img
           alt={attachment.fileName}
           style={{
-            objectFit: 'cover',
-            marginTop: '10px',
-            borderRadius: content ? '15px 15px 0px 0px ' : '15px',
-            width: '200px',
-            height: '200px',
-            marginBottom: content ? '0px' : '10px'
+            objectFit: "cover",
+            marginTop: "10px",
+            borderRadius: content ? "15px 15px 0px 0px " : "15px",
+            width: "200px",
+            height: "200px",
+            marginBottom: content ? "0px" : "10px",
           }}
           src={readUrl(attachment.url)}
         />
-      }
-      {(type === 'file' && attachment) &&
+      )}
+      {type === "file" && attachment && (
         <Stack
           direction="row"
           sx={{
-            height: '70px',
+            height: "70px",
             padding: "10px",
-            alignItems: 'center',
+            alignItems: "center",
             borderRadius: "10px",
             backgroundColor: "white",
-          }}>
+          }}
+        >
           <Box
             sx={{
-              marginLeft: '10px',
-              height: '40px',
-              width: '40px',
+              marginLeft: "10px",
+              height: "40px",
+              width: "40px",
               aspectRatio: 1,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderRadius: '200px',
-              backgroundColor: '#f9f9f9'
-            }}>
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: "200px",
+              backgroundColor: "#f9f9f9",
+            }}
+          >
             <AttachFileIcon />
           </Box>
           <Box
             onClick={() => window.location.assign(attachment.url)}
-            sx={{ width: '100%', marginX: '10px' }}>
-            <Typography
-              fontWeight="700"
-              fontSize="14px">
-              {attachment.fileName || 'Không xác định'}
+            sx={{ width: "100%", marginX: "10px" }}
+          >
+            <Typography fontWeight="700" fontSize="14px">
+              {attachment.fileName || "Không xác định"}
             </Typography>
-            <Typography
-              fontWeight="500"
-              fontSize="14px">
-              {attachment.fileSize || 'Không xác định'}
+            <Typography fontWeight="500" fontSize="14px">
+              {attachment.fileSize || "Không xác định"}
             </Typography>
           </Box>
         </Stack>
-      }
-      {
-        (content && content.length > 0) &&
+      )}
+      {content && content.length > 0 && (
         <Stack
           sx={{
             padding: "10px",
-            borderRadius: (attachment && type === 'image') ? '0px 0px 15px 15px' : '10px',
+            borderRadius:
+              attachment && type === "image" ? "0px 0px 15px 15px" : "10px",
             backgroundColor: "white",
           }}
-          direction="column">
+          direction="column"
+        >
           <Typography
             color="black"
             fontWeight="500"
             fontSize="15px"
-            variant="body1">
+            variant="body1"
+          >
             {content}
           </Typography>
           <Typography
@@ -155,67 +154,60 @@ const MsgContent = ({
             color="black"
             fontWeight="500"
             fontSize="12px"
-            variant="body1">
+            variant="body1"
+          >
             {"20:54"}
           </Typography>
         </Stack>
-      }
-    </Stack >
-  )
-}
+      )}
+    </Stack>
+  );
+};
 
 export const LeftMessage = ({
   user,
   content,
   redeem = false,
-  type = 'text',
-  attachment
+  type = "text",
+  attachment,
 }) => {
-  return (redeem
-    ? <Stack
-      spacing="15px"
-      bgcolor="whitesmoke"
-      mb="10px"
-      direction="row">
+  return redeem ? (
+    <Stack spacing="15px" bgcolor="whitesmoke" mb="10px" direction="row">
       <Avatar alt={user.fullName} src={user.avatar} />
-      <Box sx={{
-        display: 'flex',
-        alignSelf: 'flex-end',
-        marginInlineEnd: '15px',
-        borderRadius: '15px',
-        minWidth: '180px',
-        maxWidth: '350px',
-        justifyContent: 'flex-end',
-        border: '2px solid #d3d3d3',
-        paddingX: '7px',
-        paddingY: '7px',
-        marginBottom: '10px',
-      }}>
+      <Box
+        sx={{
+          display: "flex",
+          alignSelf: "flex-end",
+          marginInlineEnd: "15px",
+          borderRadius: "15px",
+          minWidth: "180px",
+          maxWidth: "350px",
+          justifyContent: "flex-end",
+          border: "2px solid #d3d3d3",
+          paddingX: "7px",
+          paddingY: "7px",
+          marginBottom: "10px",
+        }}
+      >
         <Typography
           color="black"
           fontWeight="500"
           fontStyle="italic"
           fontSize="15px"
-          variant="body1">
+          variant="body1"
+        >
           {user.fullName} đã thu hồi tin nhắn.
         </Typography>
       </Box>
     </Stack>
-    : <Stack
-      mb="10px"
-      spacing="15px"
-      bgcolor="whitesmoke"
-      direction="row">
+  ) : (
+    <Stack mb="10px" spacing="15px" bgcolor="whitesmoke" direction="row">
       <Avatar alt={user.fullName} src={user.avatar} />
       <Box>
         <Typography sx={{ fontSize: "13px", mb: "5px" }}>
           {user.fullName}
         </Typography>
-        <MsgContent
-          content={content}
-          type={type}
-          attachment={attachment}
-        />
+        <MsgContent content={content} type={type} attachment={attachment} />
       </Box>
     </Stack>
   );
@@ -229,7 +221,7 @@ export const RightMessage = ({
   msgId,
   redeem = false,
   type,
-  attachment
+  attachment,
 }) => {
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -260,48 +252,49 @@ export const RightMessage = ({
       });
   };
 
-
-
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
 
-
-
-  return (redeem
-    ? <Box
+  return redeem ? (
+    <Box
       sx={{
-        marginBottom: '10px',
-        display: 'flex',
-        alignSelf: 'flex-end',
-        borderRadius: '15px',
-        width: '180px',
-        justifyContent: 'flex-end',
-        border: '2px solid #d3d3d3',
-        paddingX: '7px',
-        paddingY: '7px'
-      }}>
+        marginBottom: "10px",
+        display: "flex",
+        alignSelf: "flex-end",
+        borderRadius: "15px",
+        width: "180px",
+        justifyContent: "flex-end",
+        border: "2px solid #d3d3d3",
+        paddingX: "7px",
+        paddingY: "7px",
+      }}
+    >
       <Typography
         textAlign="center"
         color="black"
         fontWeight="500"
         fontStyle="italic"
         fontSize="15px"
-        variant="body1">
+        variant="body1"
+      >
         {"Bạn đã thu hồi tin nhắn"}
       </Typography>
     </Box>
-    : <Stack
+  ) : (
+    <Stack
       mb="10px"
       justifyContent="flex-end"
       spacing="15px"
       bgcolor="whitesmoke"
-      direction="row">
+      direction="row"
+    >
       <IconButton
         size="small"
         sx={{ aspectRatio: 1 }}
         aria-describedby={id}
         variant="contained"
-        onClick={handleClick}>
+        onClick={handleClick}
+      >
         <MoreHorizIcon />
       </IconButton>
       <Popover
@@ -316,9 +309,14 @@ export const RightMessage = ({
         transformOrigin={{
           vertical: "top",
           horizontal: "right",
-        }}>
+        }}
+      >
         <List>
-          <ListItemButton onClick={() => { copyToClipboard(content) }}>
+          <ListItemButton
+            onClick={() => {
+              copyToClipboard(content);
+            }}
+          >
             <ListItemIcon>
               <ContentCopyIcon />
             </ListItemIcon>
@@ -333,11 +331,7 @@ export const RightMessage = ({
           </ListItemButton>
         </List>
       </Popover>
-      <MsgContent
-        content={content}
-        type={type}
-        attachment={attachment}
-      />
+      <MsgContent content={content} type={type} attachment={attachment} />
     </Stack>
   );
 };
