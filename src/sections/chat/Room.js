@@ -48,6 +48,12 @@ const Room = () => {
     }
   }
 
+  const sendFileMsg = async (msg) => {
+    socket.emit('user.sendMsg', roomId, msg, ({ message }) => {
+      console.log(message);
+    });
+  }
+
   const typingMsg = (typing) => {
     socket.emit('user.typing', roomId, {
       type: typing,
@@ -275,6 +281,7 @@ const Room = () => {
           onTyping={() => typingMsg(true)}
           onStopTyping={() => typingMsg(false)}
           onSubmitMsg={onEnteredNewMsg}
+          onSendFileMsg={sendFileMsg}
         />
       }
       <Drawer

@@ -98,9 +98,11 @@ const MsgContent = ({
           direction="row"
           sx={{
             height: '70px',
+            minWidth: '300px',
             padding: "10px",
             alignItems: 'center',
-            borderRadius: "10px",
+            borderRadius: content ? '15px 15px 0px 0px ' : '10px',
+            marginBottom: content ? '0px' : '10px',
             backgroundColor: "white",
           }}>
           <Box
@@ -138,7 +140,7 @@ const MsgContent = ({
         <Stack
           sx={{
             padding: "10px",
-            borderRadius: (attachment && type === 'image') ? '0px 0px 15px 15px' : '10px',
+            borderRadius: (attachment) ? '0px 0px 15px 15px' : '10px',
             backgroundColor: "white",
           }}
           direction="column">
