@@ -8,7 +8,8 @@ import TagFacesIcon from "@mui/icons-material/TagFaces";
 import SendIcon from "@mui/icons-material/Send";
 import { useRef, useState } from "react";
 import EmojiPicker from "emoji-picker-react";
-import { current } from "@reduxjs/toolkit";
+import SendFileMsgDialog from "./SendFileMsgDialog";
+
 
 const Textarea = styled(BaseTextareaAutosize)(
   ({ theme }) => `
@@ -37,11 +38,13 @@ const Textarea = styled(BaseTextareaAutosize)(
     }
   `
 );
-const Composer = ({ onSubmitMsg, onTyping, onStopTyping }) => {
+const Composer = ({ onSubmitMsg, onTyping, onStopTyping, onSendFileMsg }) => {
   const [timer, setTimer] = useState();
   const [content, setContent] = useState("");
   const [anchorEl, setAnchorEl] = useState(null);
   const [typing, setTyping] = useState(false);
+  const [file, setFile] = useState(null);
+
   const ref = useRef();
 
   const handleClick = (event) => {
@@ -63,6 +66,7 @@ const Composer = ({ onSubmitMsg, onTyping, onStopTyping }) => {
       ref.current?.focus();
     }
   };
+
   const onTypingMessage = (e) => {
     if (!typing) {
       onTyping();
@@ -90,6 +94,11 @@ const Composer = ({ onSubmitMsg, onTyping, onStopTyping }) => {
     setContent((prevInput) => prevInput + emojiObject.emoji);
   };
 
+  const onPickFile = (event) => {
+    var file = event.target.files[0];
+    console.log(file);
+    setFile(file);
+  }
 
   return (
     <Stack
@@ -111,10 +120,14 @@ const Composer = ({ onSubmitMsg, onTyping, onStopTyping }) => {
         placeholder="Soạn tin nhắn"
       />
       <Stack direction="row">
-        <IconButton aria-label="attach-file">
+        <IconButton
+          aria-label="attach-file"
+          onClick={() => document?.getElementById("pick-file")?.click()}>
           <AttachFileIcon />
         </IconButton>
-        <IconButton aria-label="photos">
+        <IconButton
+          onClick={() => document?.getElementById("pick-image")?.click()}
+          aria-label="photos">
           <CropOriginalIcon />
         </IconButton>
         <IconButton
@@ -123,7 +136,9 @@ const Composer = ({ onSubmitMsg, onTyping, onStopTyping }) => {
           <TagFacesIcon />
         </IconButton>
         {content.length > 0 && (
-          <IconButton onClick={onEnter} aria-label="emoji">
+          <IconButton
+            onClick={onEnter}
+            aria-label="emoji">
             <SendIcon sx={{ color: "#0162C4" }} />
           </IconButton>
         )}
@@ -142,6 +157,27 @@ const Composer = ({ onSubmitMsg, onTyping, onStopTyping }) => {
           onEmojiClick={handleEmojiClick}
           open={open} />
       </Popover>
+      <input
+        onChange={onPickFile}
+        style={{ display: "none" }}
+        type="file"
+        multiple
+        accept="image/*"
+        id="pick-image"
+      />
+      <input
+        onChange={onPickFile}
+        style={{ display: "none" }}
+        type="file"
+        multiple
+        accept="application/*"
+        id="pick-file"
+      />
+      <SendFileMsgDialog
+        file={file}
+        open={Boolean(file)}
+        onClose={() => setFile(null)}
+        onSendMsg={onSendFileMsg} />
     </Stack>
   );
 };
