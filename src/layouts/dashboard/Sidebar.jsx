@@ -177,7 +177,7 @@ const Sidebar = () => {
       </Popover>
 
       <ChangePasswordModal
-        onClose={() => setOpenDialog(false)}
+        onClose={() => setOpenCPDialog(false)}
         open={openCPDialog}
       />
       <ProfileModal onClose={() => setOpenDialog(false)} open={openDialog} />
