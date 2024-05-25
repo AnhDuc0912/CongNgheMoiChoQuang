@@ -79,7 +79,6 @@ const MsgContent = ({ type = "text", content, attachment }) => {
     const url = attachment.url;
     const modifiedUrl = url.startsWith("/") ? url.substring(1) : url;
     attachment.url = modifiedUrl;
-    console.log(modifiedUrl);
   }
 
   return (
@@ -127,7 +126,7 @@ const MsgContent = ({ type = "text", content, attachment }) => {
             <AttachFileIcon />
           </Box>
           <Box
-            onClick={() => window.location.assign(attachment.url)}
+            onClick={() => console.log(attachment.url)}
             sx={{ width: "100%", marginX: "10px" }}
           >
             <Typography fontWeight="700" fontSize="14px">
