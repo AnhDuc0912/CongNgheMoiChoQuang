@@ -44,6 +44,7 @@ const Sidebar = () => {
   const isSelected = (path) => location.pathname === path;
   const [anchorEl, setAnchorEl] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
+  const [openCPDialog, setOpenCPDialog] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -152,7 +153,7 @@ const Sidebar = () => {
           </ListItem>
 
           <ListItem
-            onClick={() => setOpenDialog(true)}
+            onClick={() => setOpenCPDialog(true)}
             button
             style={{ margin: "0 6px 0 6px" }}
           >
@@ -177,7 +178,7 @@ const Sidebar = () => {
 
       <ChangePasswordModal
         onClose={() => setOpenDialog(false)}
-        open={openDialog}
+        open={openCPDialog}
       />
       <ProfileModal onClose={() => setOpenDialog(false)} open={openDialog} />
     </Box>

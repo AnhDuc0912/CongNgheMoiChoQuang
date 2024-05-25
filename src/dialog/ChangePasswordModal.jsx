@@ -125,9 +125,7 @@ function ChangePasswordModal({ open, onClose }) {
         //  disableBackdropClick={true}
         open={open}
         scroll={"body"}
-        onClose={() => {
-          onClose();
-        }}
+        onClose={onClose}
         aria-labelledby="profile-modal-title"
         aria-describedby="profile-modal-description"
         className={classes.modal}

@@ -4,16 +4,23 @@ import { useState } from "react";
 import PersonAddAltOutlinedIcon from "@mui/icons-material/PersonAddAltOutlined";
 import AddMemberModal from "../../dialog/AddMemberModal";
 import { filterRoomInfo } from "../../utils/filterRoomInfo";
+import ProfileModal from "../../dialog/ProfileModal";
+import { useSelector } from "react-redux";
+import ProfileMemberModal from "../../dialog/ProfileMemberModal";
 
 const RoomDetail = ({
   room,
   members,
   loggingUserId,
   onDispersedRoom,
-  onAddMember
+  onAddMember,
 }) => {
   const info = filterRoomInfo(loggingUserId, room, members);
   const [openAddMemModal, setOpenAddMemModal] = useState(false);
+  const [openProfileModal, setOpenProfileModal] = useState(false);
+  const { user } = useSelector((state) => state.user);
+  const member = members.find(x => x._id !== user._id);
+
 
   return (
     <Box
@@ -77,19 +84,24 @@ const RoomDetail = ({
             </Typography>
             <Typography mt="10px" fontSize="16px" fontWeight="500">
               {info.subtitle}
-              {!room.singleRoom &&
+              {!room.singleRoom && (
                 <IconButton
                   onClick={() => {
                     setOpenAddMemModal(true);
-                  }}>
+                  }}
+                >
                   <PersonAddAltOutlinedIcon />
                 </IconButton>
-              }
+              )}
             </Typography>
           </Box>
         )}
         {room.singleRoom && (
-          <Button sx={{ marginTop: "20px" }} variant="contained">
+          <Button
+            sx={{ marginTop: "20px" }}
+            variant="contained"
+            onClick={() => setOpenProfileModal(true)}
+          >
             Xem trang cá nhân
           </Button>
         )}
@@ -101,18 +113,19 @@ const RoomDetail = ({
           flexGrow: 1,
         }}
       ></Box>
-      {(loggingUserId === room.creatorId && !room.singleRoom) && (
+      {loggingUserId === room.creatorId && !room.singleRoom && (
         <Button
           onClick={() => {
             onDispersedRoom(room._id);
           }}
           color="error"
           sx={{ marginX: "15px", marginY: "10px" }}
-          variant="contained">
+          variant="contained"
+        >
           Giải tán nhóm
         </Button>
       )}
-      {!room.singleRoom &&
+      {!room.singleRoom && (
         <AddMemberModal
           room={room}
           open={openAddMemModal}
@@ -121,7 +134,14 @@ const RoomDetail = ({
             setOpenAddMemModal(false);
           }}
         />
-      }
+      )}
+      {room.singleRoom && (
+        <ProfileMemberModal
+          open={openProfileModal}
+          onClose={() => setOpenProfileModal(false)}
+          member={member}
+        />
+      )}
     </Box>
   );
 };
