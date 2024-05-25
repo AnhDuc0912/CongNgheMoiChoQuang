@@ -17,6 +17,7 @@ const VerifyForm = () => {
         enableReinitialize: true,
         initialValues: {
             email: localEmail,
+        verificationType: "register",
             otp: ''
         },
         validationSchema: Yup.object().shape({
@@ -34,6 +35,7 @@ const VerifyForm = () => {
                     navigate("/auth/login")
                 })
                 .catch(err => {
+                    console.log(err);
                     enqueueSnackbar(`Xác thực thất bại`, {
                         variant: 'error',
                         anchorOrigin: {
