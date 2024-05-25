@@ -75,6 +75,13 @@ export const NotificationMessage = ({ user, content, members }) => {
 };
 
 const MsgContent = ({ type = "text", content, attachment }) => {
+  if (type === "image" && attachment.url) {
+    const url = attachment.url;
+    const modifiedUrl = url.startsWith("/") ? url.substring(1) : url;
+    attachment.url = modifiedUrl;
+    console.log(modifiedUrl);
+  }
+
   return (
     <Stack sx={{ maxWidth: "700px", minWidth: "100px" }} direction="column">
       {type === "image" && attachment && (
@@ -95,12 +102,12 @@ const MsgContent = ({ type = "text", content, attachment }) => {
         <Stack
           direction="row"
           sx={{
-            height: '70px',
-            minWidth: '300px',
+            height: "70px",
+            minWidth: "300px",
             padding: "10px",
-            alignItems: 'center',
-            borderRadius: content ? '15px 15px 0px 0px ' : '10px',
-            marginBottom: content ? '0px' : '10px',
+            alignItems: "center",
+            borderRadius: content ? "15px 15px 0px 0px " : "10px",
+            marginBottom: content ? "0px" : "10px",
             backgroundColor: "white",
           }}
         >
@@ -136,7 +143,7 @@ const MsgContent = ({ type = "text", content, attachment }) => {
         <Stack
           sx={{
             padding: "10px",
-            borderRadius: (attachment) ? '0px 0px 15px 15px' : '10px',
+            borderRadius: attachment ? "0px 0px 15px 15px" : "10px",
             backgroundColor: "white",
           }}
           direction="column"

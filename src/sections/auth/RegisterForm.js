@@ -17,22 +17,23 @@ const   RegisterForm = () => {
     const formik = useFormik({
         enableReinitialize: true,
         initialValues: {
-            name: "",
+            fullName: "",
             phoneNumber: "",
             password: "",
             confirmPassword: "",
             email: ""
         },
         validationSchema: Yup.object().shape({
-            name: Yup.string().required("Nhập họ và tên"),
+            fullName: Yup.string().required("Nhập họ và tên"),
             email: Yup.string().required("Vui lòng nhập email").email("Vui lòng nhập đúng định dạng email"),
             phoneNumber: Yup.string().required("Vui lòng nhập số điện thoại"),
             confirmPassword: Yup.string().required("Vui lòng nhập lại mật khẩu"),
             password: Yup.string().required("Nhập mật khẩu ít nhất 8 ký tự chứa 0-9, a-z, A-Z và ký tự đặc biệt"),
         }),
         onSubmit: async values => {
+            const { confirmPassword, ...submitValues } = values;
             await axios
-                .post("http://localhost:8000/auth/signup", values)
+                .post(process.env.REACT_APP_API_ENDPOINT + "auth/signup", submitValues)
                 .then(res => {
                     navigate('/auth/verify')
                     localStorage.setItem('email', values.email);
@@ -55,13 +56,13 @@ const   RegisterForm = () => {
             <Stack spacing={3}>
                 <TextField
                     fullWidth
-                    id="name"
+                    id="fullName"
                     label="Họ và tên"
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
-                    error={formik.errors.name && formik.touched.name}
-                    helperText={formik.errors.name}
-                    value={formik.values.name}
+                    error={formik.errors.fullName && formik.touched.fullName}
+                    helperText={formik.errors.fullName}
+                    value={formik.values.fullName}
                 />
                 <TextField
                     fullWidth
